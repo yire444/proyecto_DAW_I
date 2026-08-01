@@ -16,14 +16,15 @@ public class Departament {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
-    @Column(nullable = false, length = 50, unique = true)
+    @Column(name = "name", nullable = false, length = 50, unique = true)
     private String name;
 
-    @Column(length = 255, nullable = false)
+    @Column(name = "description", length = 255, nullable = false)
     private String description;
 
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
     private Boolean status = true;
 }

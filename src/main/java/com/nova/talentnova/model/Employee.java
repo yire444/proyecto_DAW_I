@@ -22,45 +22,46 @@ public class Employee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "lastname", nullable = false, length = 50)
     private String lastname;
 
-    @Column(nullable = false)
+    @Column(name = "birthdate", nullable = false)
     private LocalDate birthdate;
 
-    @Column(nullable = false, length = 1)
+    @Column(name = "gender", nullable = false, length = 1)
     private Character gender; // 'F' o 'M'
 
-    @Column(length = 150)
+    @Column(name = "address", length = 150)
     private String address;
 
-    @Column(nullable = false, length = 15, unique = true)
+    @Column(name = "MOBILE_PHONE", nullable = false, length = 15, unique = true)
     private String mobilePhone;
 
-    @Column(nullable = false, length = 50, unique = true)
+    @Column(name = "PERSONAL_EMAIL", nullable = false, length = 50, unique = true)
     private String personalEmail;
 
-    @Column(length = 50, unique = true)
+    @Column(name = "CORPORATE_EMAIL", length = 50, unique = true)
     private String corporateEmail;
 
-    @Column(nullable = false, length = 12, unique = true)
+    @Column(name = "DOCUMENT_NUMBER", nullable = false, length = 12, unique = true)
     private String documentNumber;
 
-    @Column(nullable = false)
+    @Column(name = "START_DATE", nullable = false)
     private LocalDate startDate;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(name = "salary", nullable = false, precision = 10, scale = 2)
     private BigDecimal salary;
 
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
     private Boolean status;
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "CREATED_AT", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
 

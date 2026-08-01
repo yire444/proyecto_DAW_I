@@ -16,14 +16,15 @@ public class JobPosition {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(name = "name", nullable = false, unique = true, length = 50)
     private String name;
 
-    @Column(nullable = false, length = 255)
+    @Column(name = "description", nullable = false, length = 255)
     private String description;
 
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
     private Boolean status = true;
 }
