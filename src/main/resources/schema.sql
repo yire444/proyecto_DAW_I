@@ -3,9 +3,15 @@
 -- ==========================================
 
 -- TIPO DE DOCUMENTO
-CREATE TABLE tbl_document_types (
-                                    id INT AUTO_INCREMENT PRIMARY KEY,
-                                    name VARCHAR(50) NOT NULL UNIQUE
+CREATE TABLE tbl_document_type (
+                                   id INT AUTO_INCREMENT PRIMARY KEY,
+                                   name VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE tbl_plan_type (
+                               id INT AUTO_INCREMENT PRIMARY KEY,
+                               name VARCHAR(50) NOT NULL UNIQUE,
+                               price DOUBLE NOT NULL
 );
 
 -- PUESTOS DE TRABAJO
@@ -85,7 +91,7 @@ CREATE TABLE tbl_employees (
                                status BOOLEAN NOT NULL DEFAULT TRUE,
                                CREATED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                               CONSTRAINT FK_Employee_DocumentType FOREIGN KEY (documentTypeId) REFERENCES tbl_document_types(id),
+                               CONSTRAINT FK_Employee_DocumentType FOREIGN KEY (documentTypeId) REFERENCES tbl_document_type(id),
                                CONSTRAINT FK_Employee_JobPosition FOREIGN KEY (jobPositionId) REFERENCES tbl_job_positions(id),
                                CONSTRAINT FK_Employee_Departament FOREIGN KEY (departamentId) REFERENCES tbl_departament(id),
                                CONSTRAINT FK_Employee_ContractType FOREIGN KEY (contractTypeId) REFERENCES tbl_contract_types(id),

@@ -3,10 +3,15 @@
 -- ==========================================
 
 -- INSERT DE TIPOS DE DOCUMENTO
-INSERT INTO tbl_document_types (name) VALUES
+INSERT INTO tbl_document_type (name) VALUES
                                           ('DNI'),
                                           ('Carnet de Extranjería'),
                                           ('Pasaporte');
+
+INSERT INTO tbl_plan_type (name, price) VALUES
+                                            ('Starter', 29.00),
+                                            ('Business', 79.00),
+                                            ('Enterprise', 199.00);
 
 -- INSERT DE PUESTOS DE TRABAJO
 INSERT INTO tbl_job_positions (name, description) VALUES

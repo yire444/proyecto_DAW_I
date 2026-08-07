@@ -7,18 +7,20 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "tbl_document_type")
+@Table(name = "tbl_plan_type")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DocumentType {
+public class PlanType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "name", nullable = false, unique = true, length = 50)
     private String name;
 
+    @Column(name = "price", nullable = false)
+    private double price;
 }
