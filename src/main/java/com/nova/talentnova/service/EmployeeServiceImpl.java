@@ -114,7 +114,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
     private void setCatalogs(Employee employee, EmployeeRequestDto dto) {
         employee.setDocumentType(entityManager.getReference(DocumentType.class, dto.getDocumentTypeId()));
         employee.setJobPosition(entityManager.getReference(JobPosition.class, dto.getJobPositionId()));
-        employee.setDepartament(entityManager.getReference(Departament.class, dto.getDepartamentId()));
+        employee.setDepartament(entityManager.getReference(WorkArea.class, dto.getDepartamentId()));
         employee.setContractType(entityManager.getReference(ContractType.class, dto.getContractTypeId()));
         employee.setWorkShift(entityManager.getReference(WorkShift.class, dto.getWorkShiftId()));
         employee.setInsuranceScheme(entityManager.getReference(InsuranceScheme.class, dto.getInsuranceSchemeId()));

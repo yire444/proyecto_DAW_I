@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Activa tu cuenta</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #121212; color: #ffffff; padding: 20px; margin: 0;">
+<div style="max-width: 600px; margin: auto; border: 1px solid #333; border-radius: 10px; padding: 30px; background-color: #18181b;">
+    <h1 style="color: #00e676; text-align: center; margin-bottom: 0;">NOVA</h1>
+    <p style="text-align: center; color: #a1a1aa; font-size: 14px;">Gestión Integral de Talento Humano</p>
+
+    <h2 style="color: #ffffff; margin-top: 30px;">¡Hola, <span th:text="${companyName}">Empresa</span>!</h2>
+    <p style="color: #d4d4d8; line-height: 1.5;">Gracias por unirte a NOVA. Estás a un solo paso de centralizar la información de tu talento humano. Utiliza el siguiente código de 6 caracteres para activar tu cuenta:</p>
+
+    <div style="background-color: #27272a; padding: 20px; text-align: center; border-radius: 8px; margin: 30px 0; border: 1px solid #3f3f46;">
+        <p style="margin: 0; font-size: 14px; color: #a1a1aa; text-transform: uppercase; letter-spacing: 1px;">Tu código de activación</p>
+        <h1 style="color: #00e676; letter-spacing: 8px; font-size: 36px; margin: 10px 0 0 0;" th:text="${code}">123456</h1>
+    </div>
+
+    <p style="font-size: 13px; color: #71717a; text-align: center;">Si no solicitaste este registro, puedes ignorar este mensaje de forma segura.</p>
+
+    <hr style="border: 0; border-top: 1px solid #27272a; margin: 20px 0;">
+    <p style="text-align: center; font-size: 12px; color: #52525b;">&copy; 2026 NOVA. Todos los derechos reservados.</p>
+</div>
+</body>
+</html>

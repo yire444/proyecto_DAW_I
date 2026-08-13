@@ -75,7 +75,7 @@ public class Employee {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "departamentId", nullable = false)
-    private Departament departament;
+    private WorkArea departament;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contractTypeId", nullable = false)

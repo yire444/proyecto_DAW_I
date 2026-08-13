@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "tbl_job_positions")
+@Table(name = "tbl_job_position")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -27,4 +27,8 @@ public class JobPosition {
 
     @Column(name = "status", nullable = false)
     private Boolean status = true;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "work_area_id", nullable = false)
+    private WorkArea workArea;
 }

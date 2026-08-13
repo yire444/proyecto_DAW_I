@@ -36,6 +36,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/employees/**").permitAll()
                         .requestMatchers("/api/document-type/**").permitAll()
                         .requestMatchers("/api/plan-type/**").permitAll()
+                        .requestMatchers("/api/billing-cycle/**").permitAll()
+                        .requestMatchers("/api/companies/**").permitAll()
                         .anyRequest().authenticated()
                 ).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

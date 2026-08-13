@@ -11,12 +11,13 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DepartamentRequestDTO {
+public class WorkAreaRequestDto {
 
-    @NotBlank(message = "El nombre del departamento es obligatorio")
-    @Size(max = 50, message = "El nombre no puede tener más de 50 caracteres")
+    @NotBlank(message = "El nombre del área es obligatorio")
+    @Size(max = 50, message = "El nombre no puede superar los 50 caracteres")
     private String name;
 
-    @Size(max = 255, message = "La descripción no puede tener más de 255 caracteres")
+    @NotBlank(message = "La descripción es obligatoria")
+    @Size(max = 255, message = "La descripción no puede superar los 255 caracteres")
     private String description;
 }

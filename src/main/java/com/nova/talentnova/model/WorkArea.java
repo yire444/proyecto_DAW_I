@@ -7,21 +7,24 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "tbl_plan_type")
+@Table(name = "tbl_work_area")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlanType {
+public class WorkArea {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private Integer id;
 
-    @Column(name = "name", nullable = false, unique = true, length = 50)
+    @Column(name = "name", nullable = false, length = 50, unique = true)
     private String name;
 
-    @Column(name = "price", nullable = false)
-    private double price;
+    @Column(name = "description", nullable = false, length = 255)
+    private String description;
+
+    @Column(name = "status", nullable = false)
+    private Boolean status = true;
 }
