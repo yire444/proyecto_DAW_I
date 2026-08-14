@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/job-positions")
+@RequestMapping("/api/job-position")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class JobPositionController {
@@ -27,7 +27,7 @@ public class JobPositionController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<JobPositionResponseDTO>> getById(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<JobPositionResponseDTO>> getById(@PathVariable Long id) {
         JobPositionResponseDTO dto = service.findById(id);
         return ResponseEntity.ok(ApiResponse.success("Puesto encontrado con el id:" + id, dto));
     }
@@ -41,14 +41,14 @@ public class JobPositionController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<JobPositionResponseDTO>> update(
-            @PathVariable Integer id, 
+            @PathVariable Long id,
             @Valid @RequestBody JobPositionRequestDTO dto) {
         JobPositionResponseDTO updated = service.updateJobPosition(id, dto);
         return ResponseEntity.ok(ApiResponse.success("Puesto actualizado con éxito", updated));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         service.deleteJobPosition(id);
         return ResponseEntity.ok(ApiResponse.success("Puesto eliminado con éxito", null));
     }

@@ -11,14 +11,14 @@ public interface IWorkAreaService {
     List<WorkAreaResponseDto> findAll();
 
     // BUSCAR POR ID
-    WorkAreaResponseDto findById(Integer id);
+    WorkAreaResponseDto findById(Long id);
 
     // REGISTRAR NUEVA ÁREA DE TRABAJO
     WorkAreaResponseDto registerWorkArea(WorkAreaRequestDto dto);
 
     // ACTUALIZAR POR ID
-    WorkAreaResponseDto updateWorkArea(Integer id, WorkAreaRequestDto dto);
+    WorkAreaResponseDto updateWorkArea(Long id, WorkAreaRequestDto dto);
 
     // ELIMINAR O DESACTIVAR UN ÁREA DE TRABAJO
-    void deleteWorkArea(Integer id);
+    void deleteWorkArea(Long id);
 }

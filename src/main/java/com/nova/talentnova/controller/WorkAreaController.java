@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/work-areas")
+@RequestMapping("/api/work-area")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class WorkAreaController {
@@ -27,7 +27,7 @@ public class WorkAreaController {
 
     //BUSCAR POR ID
     @GetMapping("/{id}")
-    public ResponseEntity<WorkAreaResponseDto> getById(@PathVariable Integer id) {
+    public ResponseEntity<WorkAreaResponseDto> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
@@ -40,15 +40,15 @@ public class WorkAreaController {
     //ACTUALIZAR
     @PutMapping("/{id}")
     public ResponseEntity<WorkAreaResponseDto> update(
-            @PathVariable Integer id,
+            @PathVariable Long id,
             @Valid @RequestBody WorkAreaRequestDto dto) {
         return ResponseEntity.ok(service.updateWorkArea(id, dto));
     }
 
     //ELIMINAR
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.deleteWorkArea(id);
-        return ResponseEntity.noContent().build(); // HTTP 204 No Content es el estándar para borrados exitosos
+        return ResponseEntity.noContent().build();
     }
 }

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "tbl_contract_types")
+@Table(name = "tbl_contract_type")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,8 +16,9 @@ public class ContractType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "id")
+    private Long id;
 
-    @Column(nullable = false, length = 50, unique = true)
+    @Column(name = "name", nullable = false, unique = true, length = 30)
     private String name;
 }

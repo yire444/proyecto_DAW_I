@@ -1,6 +1,6 @@
 package com.nova.talentnova.repository;
 
-import com.nova.talentnova.CompanyStatus;
+import com.nova.talentnova.GeneralStatus;
 import com.nova.talentnova.model.Company;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -49,7 +49,7 @@ public interface ICompanyRepository extends JpaRepository<Company, Long> {
             @Param("name") String nameCompany,
             @Param("email") String emailCompany,
             @Param("phone") String phoneCompany,
-            @Param("status") CompanyStatus status,
+            @Param("status") GeneralStatus status,
             @Param("planTypeId") Long planTypeId,
             @Param("billingCycleId") Long billingCycleId
     );

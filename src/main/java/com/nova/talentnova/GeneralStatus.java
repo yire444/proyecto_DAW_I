@@ -1,6 +1,6 @@
 package com.nova.talentnova;
 
-public enum CompanyStatus {
+public enum GeneralStatus {
     PENDING,
     ACTIVE,
     SUSPENDED,

@@ -1,6 +1,6 @@
 package com.nova.talentnova.dto;
 
-import com.nova.talentnova.CompanyStatus;
+import com.nova.talentnova.GeneralStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ public class CompanyFilterDto {
     private String name;
     private String email;
     private String phone;
-    private CompanyStatus status;
+    private GeneralStatus status;
     private Long planTypeId;
     private Long billingCycleId;
 }

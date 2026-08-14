@@ -1,5 +1,7 @@
 package com.nova.talentnova.model;
 
+import com.nova.talentnova.GeneralStatus;
+import com.nova.talentnova.controller.GeneralStatusBooleanConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +19,7 @@ public class WorkArea {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "name", nullable = false, length = 50, unique = true)
     private String name;
@@ -25,6 +27,7 @@ public class WorkArea {
     @Column(name = "description", nullable = false, length = 255)
     private String description;
 
+    @Convert(converter = GeneralStatusBooleanConverter.class)
     @Column(name = "status", nullable = false)
-    private Boolean status = true;
+    private GeneralStatus status = GeneralStatus.ACTIVE;
 }

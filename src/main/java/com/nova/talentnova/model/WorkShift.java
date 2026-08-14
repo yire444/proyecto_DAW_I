@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "tbl_work_shifts")
+@Table(name = "tbl_work_shift")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -18,14 +18,15 @@ public class WorkShift {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "id")
+    private Long id;
 
-    @Column(nullable = false, length = 50, unique = true)
+    @Column(name = "name", nullable = false, unique = true, length = 50)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "startTime", nullable = false)
     private LocalTime startTime;
 
-    @Column(nullable = false)
+    @Column(name = "endTime", nullable = false)
     private LocalTime endTime;
 }

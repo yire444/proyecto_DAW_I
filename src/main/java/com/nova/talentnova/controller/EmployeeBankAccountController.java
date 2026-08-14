@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/employee-bank-accounts")
+@RequestMapping("/api/employee-bank-account")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class EmployeeBankAccountController {

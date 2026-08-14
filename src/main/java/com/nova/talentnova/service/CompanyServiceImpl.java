@@ -1,6 +1,6 @@
 package com.nova.talentnova.service;
 
-import com.nova.talentnova.CompanyStatus;
+import com.nova.talentnova.GeneralStatus;
 import com.nova.talentnova.dto.CompanyFilterDto;
 import com.nova.talentnova.dto.CompanyRequestDto;
 import com.nova.talentnova.dto.CompanyResponseDto;
@@ -94,11 +94,11 @@ public class CompanyServiceImpl implements ICompanyService {
         Company company = companyRepository.findByEmailCompanyAndVerificationCode(email, code)
                 .orElseThrow(() -> new RuntimeException("Código incorrecto o empresa no encontrada"));
 
-        if (company.getStatus() == CompanyStatus.ACTIVE) {
+        if (company.getStatus() == GeneralStatus.ACTIVE) {
             throw new RuntimeException("Esta cuenta ya está activada");
         }
 
-        company.setStatus(CompanyStatus.ACTIVE);
+        company.setStatus(GeneralStatus.ACTIVE);
         company.setVerificationCode(null);
         companyRepository.save(company);
     }
@@ -109,7 +109,7 @@ public class CompanyServiceImpl implements ICompanyService {
         Company company = companyRepository.findByEmailCompany(email)
                 .orElseThrow(() -> new RuntimeException("Correo o contraseña incorrectos"));
 
-        if (company.getStatus() != CompanyStatus.ACTIVE) {
+        if (company.getStatus() != GeneralStatus.ACTIVE) {
             throw new RuntimeException("Tu cuenta aún no está activada. Por favor, ingresa el código de verificación.");
         }
 
@@ -197,7 +197,7 @@ public class CompanyServiceImpl implements ICompanyService {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada con el ID: " + id));
 
-        company.setStatus(CompanyStatus.INACTIVE);
+        company.setStatus(GeneralStatus.INACTIVE);
         companyRepository.save(company);
     }
 }

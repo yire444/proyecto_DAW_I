@@ -48,53 +48,50 @@ CREATE TABLE TBL_COMPANY (
 -- PUESTOS DE TRABAJO
 -- DEPARTAMENTOS DE TRABAJO
 CREATE TABLE tbl_work_area (
-                               id INT AUTO_INCREMENT PRIMARY KEY,
+                               id IDENTITY PRIMARY KEY,
                                name VARCHAR(50) NOT NULL UNIQUE,
                                description VARCHAR(255) NOT NULL,
                                status BOOLEAN NOT NULL DEFAULT TRUE
 );
 
---PUESTOS DE TRABAJO
 CREATE TABLE tbl_job_position (
-                                  id INT AUTO_INCREMENT PRIMARY KEY,
+                                  id IDENTITY PRIMARY KEY,
                                   name VARCHAR(50) NOT NULL UNIQUE,
                                   description VARCHAR(255) NOT NULL,
                                   status BOOLEAN NOT NULL DEFAULT TRUE,
-                                  work_area_id INT NOT NULL,
+                                  work_area_id BIGINT NOT NULL,
                                   CONSTRAINT fk_position_work_area FOREIGN KEY (work_area_id) REFERENCES tbl_work_area(id)
 );
 
-
-
 -- TIPOS DE CONTRATO
 CREATE TABLE tbl_contract_type (
-                                   id INT AUTO_INCREMENT PRIMARY KEY,
+                                   id INT IDENTITY PRIMARY KEY,
                                    name VARCHAR(30) NOT NULL UNIQUE
 );
 
 -- HORARIOS / TURNOS DE TRABAJO
-CREATE TABLE tbl_work_shifts (
-                                 id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE tbl_work_shift (
+                                 id INT IDENTITY PRIMARY KEY,
                                  name VARCHAR(50) NOT NULL UNIQUE,
                                  startTime TIME NOT NULL,
                                  endTime TIME NOT NULL
 );
 
 -- SEGUROS MEDICOS
-CREATE TABLE tbl_insurance_schemes (
-                                       id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE tbl_insurance_scheme (
+                                       id INT IDENTITY PRIMARY KEY,
                                        name VARCHAR(50) NOT NULL UNIQUE
 );
 
 -- REGIMÉN PENSIONISTA
-CREATE TABLE tbl_pension_schemes (
-                                     id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE tbl_pension_scheme (
+                                     id INT IDENTITY PRIMARY KEY,
                                      name VARCHAR(50) NOT NULL UNIQUE
 );
 
 -- BANCOS
-CREATE TABLE tbl_banks (
-                           id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE tbl_bank (
+                           id INT IDENTITY PRIMARY KEY,
                            name VARCHAR(50) NOT NULL UNIQUE
 );
 

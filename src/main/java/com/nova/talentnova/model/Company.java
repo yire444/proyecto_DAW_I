@@ -1,6 +1,6 @@
 package com.nova.talentnova.model;
 
-import com.nova.talentnova.CompanyStatus;
+import com.nova.talentnova.GeneralStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -54,7 +54,7 @@ public class Company {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
-    private CompanyStatus status = CompanyStatus.PENDING;
+    private GeneralStatus status = GeneralStatus.PENDING;
 
     //TIPO DE DOCUMENTO
     @ManyToOne(fetch = FetchType.LAZY)

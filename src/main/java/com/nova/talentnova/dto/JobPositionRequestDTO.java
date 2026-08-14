@@ -1,6 +1,7 @@
 package com.nova.talentnova.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,4 +21,7 @@ public class JobPositionRequestDTO {
     @NotBlank(message = "La descripción es obligatoria")
     @Size(max = 255, message = "La descripción no puede tener más de 255 caracteres")
     private String description;
+
+    @NotNull(message = "Señeccione el área de trabajo")
+    private Long workAreaId;
 }

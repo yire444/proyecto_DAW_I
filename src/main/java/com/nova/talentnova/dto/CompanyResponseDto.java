@@ -1,6 +1,6 @@
 package com.nova.talentnova.dto;
 
-import com.nova.talentnova.CompanyStatus;
+import com.nova.talentnova.GeneralStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +22,7 @@ public class CompanyResponseDto {
     private String emailCompany;
     private String phoneCompany;
     private LocalDate createdDate;
-    private CompanyStatus status;
+    private GeneralStatus status;
 
     private String documentTypeName;
     private String planName;

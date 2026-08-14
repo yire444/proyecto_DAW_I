@@ -1,5 +1,6 @@
 package com.nova.talentnova.mapper;
 
+import com.nova.talentnova.GeneralStatus;
 import com.nova.talentnova.dto.WorkAreaRequestDto;
 import com.nova.talentnova.dto.WorkAreaResponseDto;
 import com.nova.talentnova.model.WorkArea;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class WorkAreaMapper {
 
-    // Convierte de RequestDto a Entidad
+    // Convierte DTO -> ENTITDAD
     public WorkArea toEntity(WorkAreaRequestDto dto) {
         if (dto == null) {
             return null;
@@ -16,11 +17,11 @@ public class WorkAreaMapper {
         WorkArea workArea = new WorkArea();
         workArea.setName(dto.getName());
         workArea.setDescription(dto.getDescription());
-        workArea.setStatus(true);
+        workArea.setStatus(GeneralStatus.ACTIVE); // 👈 Corregido aquí
         return workArea;
     }
 
-    // Convierte de Entidad a ResponseDto
+    // Convierte ENTIDAD -> DTO
     public WorkAreaResponseDto toResponseDto(WorkArea entity) {
         if (entity == null) {
             return null;

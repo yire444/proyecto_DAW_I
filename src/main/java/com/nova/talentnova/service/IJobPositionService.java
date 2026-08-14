@@ -7,18 +7,18 @@ import java.util.List;
 
 public interface IJobPositionService {
 
-    //LISTAR LOS PUESTOS DE TRABAJO
+    // LISTAR LOS PUESTOS DE TRABAJO ACTIVOS
     List<JobPositionResponseDTO> findAll();
 
-    //BUSCAR EL PUESTO DE TRABAJO POR ID
-    JobPositionResponseDTO findById(Integer id);
+    // BUSCAR EL PUESTO DE TRABAJO POR ID
+    JobPositionResponseDTO findById(Long id);
 
-    //REGISTRAR PUESTO DE TRABAJO
+    // REGISTRAR PUESTO DE TRABAJO
     JobPositionResponseDTO registerJobPosition(JobPositionRequestDTO dto);
 
-    //ACTUALIZAR PUESTO DE TRABAJO
-    JobPositionResponseDTO updateJobPosition(Integer id, JobPositionRequestDTO dto);
+    // ACTUALIZAR PUESTO DE TRABAJO
+    JobPositionResponseDTO updateJobPosition(Long id, JobPositionRequestDTO dto);
 
-    //ELIMINAR PUESTO DE TRABAJO
-    void deleteJobPosition(Integer id);
+    // ELIMINAR O DESACTIVAR PUESTO DE TRABAJO
+    void deleteJobPosition(Long id);
 }
