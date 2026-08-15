@@ -1,20 +1,20 @@
 package com.nova.talentnova.dto;
 
+import com.nova.talentnova.GeneralStatus;
 import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
 public class EmployeeBankAccountResponseDto {
-
-    private Integer id;
-    private Integer employeeId;
+    private Long id;
+    private Long employeeId;
     private String employeeFullName;
-    private Integer bankId;
+    private Long bankId;
     private String bankName;
     private String accountNumber;
     private String cciNumber;
     private String accountType;
     private Boolean isSalaryAccount;
-    private Boolean status;
+    private GeneralStatus status;
     private LocalDateTime createdAt;
 }

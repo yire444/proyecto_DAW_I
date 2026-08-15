@@ -1,14 +1,16 @@
 package com.nova.talentnova.service;
 
+import com.nova.talentnova.GeneralStatus;
 import com.nova.talentnova.dto.EmployeeBankAccountRequestDto;
 import com.nova.talentnova.dto.EmployeeBankAccountResponseDto;
 import com.nova.talentnova.mapper.EmployeeBankAccountMapper;
 import com.nova.talentnova.model.Bank;
 import com.nova.talentnova.model.Employee;
 import com.nova.talentnova.model.EmployeeBankAccount;
+import com.nova.talentnova.repository.IBankRepository;
 import com.nova.talentnova.repository.IEmployeeBankAccountRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import com.nova.talentnova.repository.IEmployeeRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,48 +23,57 @@ import java.util.stream.Collectors;
 public class EmployeeBankAccountServiceImpl implements IEmployeeBankAccountService {
 
     private final IEmployeeBankAccountRepository bankAccountRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final IEmployeeRepository employeeRepository;
+    private final IBankRepository bankRepository;
 
     @Override
     @Transactional(readOnly = true)
-    public List<EmployeeBankAccountResponseDto> findByEmployeeId(Integer employeeId) {
-        List<EmployeeBankAccount> accounts = bankAccountRepository.findByEmployeeId(employeeId);
-        return accounts.stream()
+    public List<EmployeeBankAccountResponseDto> findByEmployeeId(Long employeeId) {
+        if (!employeeRepository.existsById(employeeId)) {
+            throw new EntityNotFoundException("Empleado no encontrado con ID: " + employeeId);
+        }
+        return bankAccountRepository.findByEmployeeIdAndStatus(employeeId, GeneralStatus.ACTIVE).stream()
                 .map(EmployeeBankAccountMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
+    // REGISTRAR CUENTA
     @Override
     @Transactional
-    public EmployeeBankAccountResponseDto registerAccount(Integer employeeId, EmployeeBankAccountRequestDto requestDto) {
-        // Validar si el número de cuenta ya existe
+    public EmployeeBankAccountResponseDto registerAccount(Long employeeId, EmployeeBankAccountRequestDto requestDto) {
+
+        // BUSCAR EMPLEADO
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EntityNotFoundException("Empleado no encontrado con ID: " + employeeId));
+
+        // BUSCAR BANCO
+        Bank bank = bankRepository.findById(requestDto.getBankId())
+                .orElseThrow(() -> new EntityNotFoundException("Banco no encontrado con ID: " + requestDto.getBankId()));
+
+        // VALIDAR QUE EL NÚMERO DE CUENTA NO EXISTA
         if (bankAccountRepository.existsByAccountNumber(requestDto.getAccountNumber())) {
-            throw new RuntimeException("El número de cuenta ya se encuentra registrado.");
+            throw new IllegalArgumentException("El número de cuenta ya se encuentra registrado en el sistema.");
         }
-        // Validar si el número de CCI ya existe
+
+        // VALIDAR QUE EL NÚMERO CCI NO EXISTA
         if (bankAccountRepository.existsByCciNumber(requestDto.getCciNumber())) {
-            throw new RuntimeException("El número de CCI ya se encuentra registrado.");
+            throw new IllegalArgumentException("El número CCI ya se encuentra registrado en el sistema.");
         }
 
-        EmployeeBankAccount account = EmployeeBankAccountMapper.toEntity(requestDto);
+        EmployeeBankAccount account = EmployeeBankAccountMapper.toEntity(requestDto, employee, bank);
+        EmployeeBankAccount savedAccount = bankAccountRepository.save(account);
 
-        // Asociar empleado y banco usando getReference (sin hacer SELECTs innecesarios)
-        account.setEmployee(entityManager.getReference(Employee.class, employeeId));
-        account.setBank(entityManager.getReference(Bank.class, requestDto.getBankId()));
-
-        EmployeeBankAccount saved = bankAccountRepository.save(account);
-        return EmployeeBankAccountMapper.toResponseDto(saved);
+        return EmployeeBankAccountMapper.toResponseDto(savedAccount);
     }
 
+    // ELIMINAR CUENTA (BORRADO LÓGICO)
     @Override
     @Transactional
-    public void deleteAccount(Integer id) {
+    public void deleteAccount(Long id) {
         EmployeeBankAccount account = bankAccountRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cuenta bancaria no encontrada con el ID: " + id));
-        
-        account.setStatus(false);
+                .orElseThrow(() -> new EntityNotFoundException("Cuenta bancaria no encontrada con ID: " + id));
+
+        account.setStatus(GeneralStatus.INACTIVE);
         bankAccountRepository.save(account);
     }
 }

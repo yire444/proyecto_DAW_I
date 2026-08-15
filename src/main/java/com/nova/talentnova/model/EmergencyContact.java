@@ -14,21 +14,22 @@ public class EmergencyContact {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "id")
+    private Long id;
 
-    @Column(name = "name", length = 50, nullable = false)
+    @Column(name = "name", nullable = false, length = 150)
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employeeId", nullable = false)
+    @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
 
-    @Column(name = "relationShip", length = 50, nullable = false)
-    private String relationShip;
+    @Column(name = "relationship", nullable = false, length = 50)
+    private String relationship;
 
-    @Column(name = "mobilePhone", length = 15, nullable = false)
+    @Column(name = "mobile_phone", nullable = false, length = 15)
     private String mobilePhone;
 
-    @Column(name = "address", length = 250, nullable = false)
+    @Column(name = "address", nullable = false, length = 250)
     private String address;
 }

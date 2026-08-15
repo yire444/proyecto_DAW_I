@@ -12,34 +12,35 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/employee-bank-account")
+@RequestMapping("/api/employees/{employeeId}/bank-accounts")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class EmployeeBankAccountController {
 
     private final IEmployeeBankAccountService bankAccountService;
 
-    //LISTAR
-    @GetMapping("/employee/{employeeId}")
-    public ResponseEntity<List<EmployeeBankAccountResponseDto>> findByEmployeeId(@PathVariable Integer employeeId) {
+    //LISTAR CUENTAS DEL EMPLEADO
+    @GetMapping
+    public ResponseEntity<List<EmployeeBankAccountResponseDto>> listAccount(@PathVariable Long employeeId) {
         List<EmployeeBankAccountResponseDto> accounts = bankAccountService.findByEmployeeId(employeeId);
         return ResponseEntity.ok(accounts);
     }
 
     //REGISTRAR
-    @PostMapping("/employee/{employeeId}")
+    @PostMapping
     public ResponseEntity<EmployeeBankAccountResponseDto> registerAccount(
-            @PathVariable Integer employeeId,
+            @PathVariable Long employeeId,
             @Valid @RequestBody EmployeeBankAccountRequestDto requestDto) {
-        
         EmployeeBankAccountResponseDto newAccount = bankAccountService.registerAccount(employeeId, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(newAccount);
     }
 
-    //ELIMINAR
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAccount(@PathVariable Integer id) {
-        bankAccountService.deleteAccount(id);
+    // 3. ELIMINAR (BORRADO LÓGICO) UNA CUENTA BANCARIA POR SU ID
+    @DeleteMapping("/{accountId}")
+    public ResponseEntity<Void> deleteAccount(
+            @PathVariable Long employeeId,
+            @PathVariable Long accountId) {
+        bankAccountService.deleteAccount(accountId);
         return ResponseEntity.noContent().build();
     }
 }

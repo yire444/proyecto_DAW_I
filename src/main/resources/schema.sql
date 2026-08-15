@@ -156,7 +156,7 @@ CREATE TABLE tbl_employee_bank_accounts (
                                             CONSTRAINT chk_bank_account_type CHECK (account_type IN ('Ahorros', 'Corriente'))
 );
 
--- EMERGENCY CONTACT TABLE
+-- CONTACTOS DE EMERGENCIA DE LOS EMPLEADOS
 CREATE TABLE tbl_emergency_contact (
                                        id IDENTITY PRIMARY KEY,
                                        name VARCHAR(150) NOT NULL,

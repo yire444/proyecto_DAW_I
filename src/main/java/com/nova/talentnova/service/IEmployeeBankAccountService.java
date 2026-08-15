@@ -7,12 +7,12 @@ import java.util.List;
 
 public interface IEmployeeBankAccountService {
 
-    //LISTAR
-    List<EmployeeBankAccountResponseDto> findByEmployeeId(Integer employeeId);
+    //LISTAR SEGÚN EL EMPLEADO CORRESPONDIENTE
+    List<EmployeeBankAccountResponseDto> findByEmployeeId(Long employeeId);
 
     //REGISTRAR
-    EmployeeBankAccountResponseDto registerAccount(Integer employeeId, EmployeeBankAccountRequestDto requestDto);
+    EmployeeBankAccountResponseDto registerAccount(Long employeeId, EmployeeBankAccountRequestDto requestDto);
 
     //ELIMINAR
-    void deleteAccount(Integer id);
+    void deleteAccount(Long id);
 }
