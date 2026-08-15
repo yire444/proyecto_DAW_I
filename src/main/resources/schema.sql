@@ -4,13 +4,13 @@
 
 -- TIPO DE DOCUMENTO
 CREATE TABLE tbl_document_type (
-                                   id INT AUTO_INCREMENT PRIMARY KEY,
+                                   id IDENTITY PRIMARY KEY,
                                    name VARCHAR(50) NOT NULL UNIQUE
 );
 
 --TIPO DE PLAN
 CREATE TABLE tbl_billing_cycle(
-                                    id INT AUTO_INCREMENT PRIMARY KEY,
+                                    id IDENTITY PRIMARY KEY,
                                     name VARCHAR(50) NOT NULL UNIQUE,
                                     months INT NOT NULL ,
                                     discount DECIMAL(5,2) DEFAULT 0.00
@@ -19,14 +19,14 @@ CREATE TABLE tbl_billing_cycle(
 
 --TIPO DE FACTURACIÓN
 CREATE TABLE tbl_plan_type (
-                               id INT AUTO_INCREMENT PRIMARY KEY,
+                               id IDENTITY PRIMARY KEY,
                                name VARCHAR(50) NOT NULL UNIQUE,
                                price DOUBLE NOT NULL
 );
 
 --EMPRESA
-CREATE TABLE TBL_COMPANY (
-                             id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE tbl_company (
+                             id IDENTITY PRIMARY KEY,
                              name_company VARCHAR(255) NOT NULL,
                              ruc VARCHAR(11) NOT NULL UNIQUE,
                              name_holder VARCHAR(255) NOT NULL,
@@ -65,13 +65,13 @@ CREATE TABLE tbl_job_position (
 
 -- TIPOS DE CONTRATO
 CREATE TABLE tbl_contract_type (
-                                   id INT IDENTITY PRIMARY KEY,
+                                   id IDENTITY PRIMARY KEY,
                                    name VARCHAR(30) NOT NULL UNIQUE
 );
 
 -- HORARIOS / TURNOS DE TRABAJO
 CREATE TABLE tbl_work_shift (
-                                 id INT IDENTITY PRIMARY KEY,
+                                 id IDENTITY PRIMARY KEY,
                                  name VARCHAR(50) NOT NULL UNIQUE,
                                  startTime TIME NOT NULL,
                                  endTime TIME NOT NULL
@@ -79,19 +79,19 @@ CREATE TABLE tbl_work_shift (
 
 -- SEGUROS MEDICOS
 CREATE TABLE tbl_insurance_scheme (
-                                       id INT IDENTITY PRIMARY KEY,
+                                       id IDENTITY PRIMARY KEY,
                                        name VARCHAR(50) NOT NULL UNIQUE
 );
 
 -- REGIMÉN PENSIONISTA
 CREATE TABLE tbl_pension_scheme (
-                                     id INT IDENTITY PRIMARY KEY,
+                                     id IDENTITY PRIMARY KEY,
                                      name VARCHAR(50) NOT NULL UNIQUE
 );
 
 -- BANCOS
 CREATE TABLE tbl_bank (
-                           id INT IDENTITY PRIMARY KEY,
+                           id IDENTITY PRIMARY KEY,
                            name VARCHAR(50) NOT NULL UNIQUE
 );
 
@@ -101,65 +101,71 @@ CREATE TABLE tbl_bank (
 -- ==========================================
 
 -- TABLE EMPLOYEE
+-- ==========================================
+-- TABLA PRINCIPAL: EMPLEADOS
+-- ==========================================
 CREATE TABLE tbl_employees (
-                               id INT AUTO_INCREMENT PRIMARY KEY,
+                               id IDENTITY PRIMARY KEY,
+                               company_id BIGINT NOT NULL,
                                name VARCHAR(50) NOT NULL,
                                lastname VARCHAR(50) NOT NULL,
                                birthdate DATE NOT NULL,
                                gender CHAR(1) NOT NULL,
-                               address VARCHAR(150),
-                               MOBILE_PHONE VARCHAR(15) NOT NULL UNIQUE,
-                               PERSONAL_EMAIL VARCHAR(50) NOT NULL UNIQUE,
-                               CORPORATE_EMAIL VARCHAR(50) UNIQUE,
-                               documentTypeId INT NOT NULL,
-                               DOCUMENT_NUMBER VARCHAR(12) NOT NULL UNIQUE,
-                               jobPositionId INT NOT NULL,
-                               departamentId INT NOT NULL,
-                               START_DATE DATE NOT NULL,
+                               address VARCHAR(150) NOT NULL,
+                               mobile_phone VARCHAR(15) NOT NULL UNIQUE,
+                               personal_email VARCHAR(150) NOT NULL UNIQUE,
+                               corporate_email VARCHAR(50) UNIQUE,
+                               document_type_id BIGINT NOT NULL,
+                               document_number VARCHAR(12) NOT NULL UNIQUE,
+                               job_position_id BIGINT NOT NULL,
+                               department_id BIGINT NOT NULL,
+                               start_date DATE NOT NULL,
                                salary DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-                               contractTypeId INT NOT NULL,
-                               workShiftId INT NOT NULL,
-                               insuranceSchemeId INT NOT NULL,
-                               pensionSchemeId INT NOT NULL,
+                               contract_type_id BIGINT NOT NULL,
+                               work_shift_id BIGINT NOT NULL,
+                               insurance_scheme_id BIGINT NOT NULL,
+                               pension_scheme_id BIGINT NOT NULL,
                                status BOOLEAN NOT NULL DEFAULT TRUE,
-                               CREATED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                               created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                               CONSTRAINT FK_Employee_DocumentType FOREIGN KEY (documentTypeId) REFERENCES tbl_document_type(id),
-                               CONSTRAINT FK_Employee_JobPosition FOREIGN KEY (jobPositionId) REFERENCES tbl_job_positions(id),
-                               CONSTRAINT FK_Employee_Departament FOREIGN KEY (departamentId) REFERENCES tbl_departament(id),
-                               CONSTRAINT FK_Employee_ContractType FOREIGN KEY (contractTypeId) REFERENCES tbl_contract_types(id),
-                               CONSTRAINT FK_Employee_WorkShift FOREIGN KEY (workShiftId) REFERENCES tbl_work_shifts(id),
-                               CONSTRAINT FK_Employee_InsuranceScheme FOREIGN KEY (insuranceSchemeId) REFERENCES tbl_insurance_schemes(id),
-                               CONSTRAINT FK_Employee_PensionScheme FOREIGN KEY (pensionSchemeId) REFERENCES tbl_pension_schemes(id),
-                               CONSTRAINT CHK_Employee_Gender CHECK (gender IN ('F', 'M'))
+                               CONSTRAINT fk_employee_company FOREIGN KEY (company_id) REFERENCES tbl_company(id),
+                               CONSTRAINT fk_employee_document_type FOREIGN KEY (document_type_id) REFERENCES tbl_document_type(id),
+                               CONSTRAINT fk_employee_job_position FOREIGN KEY (job_position_id) REFERENCES tbl_job_position(id),
+                               CONSTRAINT fk_employee_department FOREIGN KEY (department_id) REFERENCES tbl_work_area(id),
+                               CONSTRAINT fk_employee_contract_type FOREIGN KEY (contract_type_id) REFERENCES tbl_contract_type(id),
+                               CONSTRAINT fk_employee_work_shift FOREIGN KEY (work_shift_id) REFERENCES tbl_work_shift(id),
+                               CONSTRAINT fk_employee_insurance_scheme FOREIGN KEY (insurance_scheme_id) REFERENCES tbl_insurance_scheme(id),
+                               CONSTRAINT fk_employee_pension_scheme FOREIGN KEY (pension_scheme_id) REFERENCES tbl_pension_scheme(id),
+                               CONSTRAINT chk_employee_gender CHECK (gender IN ('F', 'M'))
 );
 
 -- CUENTAS DE EMPLEADOS (Bancarias)
 CREATE TABLE tbl_employee_bank_accounts (
-                                            id INT AUTO_INCREMENT PRIMARY KEY,
-                                            employeeId INT NOT NULL,
-                                            bankId INT NOT NULL,
-                                            accountNumber VARCHAR(20) NOT NULL,
-                                            cciNumber CHAR(20) NOT NULL,
-                                            accountType VARCHAR(20) NOT NULL,
-                                            isSalaryAccount BOOLEAN NOT NULL DEFAULT TRUE,
+                                            id IDENTITY PRIMARY KEY,
+                                            employee_id BIGINT NOT NULL,
+                                            bank_id BIGINT NOT NULL,
+                                            account_number VARCHAR(20) NOT NULL UNIQUE,
+                                            cci_number CHAR(20) NOT NULL UNIQUE,
+                                            account_type VARCHAR(20) NOT NULL,
+                                            is_salary_account BOOLEAN NOT NULL DEFAULT TRUE,
                                             status BOOLEAN NOT NULL DEFAULT TRUE,
-                                            createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                                            CONSTRAINT FK_BankAccount_Employee FOREIGN KEY (employeeId) REFERENCES tbl_employees(id) ON DELETE CASCADE,
-                                            CONSTRAINT FK_BankAccount_Bank FOREIGN KEY (bankId) REFERENCES tbl_banks(id),
-                                            CONSTRAINT CHK_BankAccount_Type CHECK (accountType IN ('Ahorros', 'Corriente'))
+                                            CONSTRAINT fk_bank_account_employee FOREIGN KEY (employee_id) REFERENCES tbl_employees(id) ON DELETE CASCADE,
+                                            CONSTRAINT fk_bank_account_bank FOREIGN KEY (bank_id) REFERENCES tbl_banks(id),
+                                            CONSTRAINT chk_bank_account_type CHECK (account_type IN ('Ahorros', 'Corriente'))
 );
 
 -- EMERGENCY CONTACT TABLE
 CREATE TABLE tbl_emergency_contact (
-                                       id INT AUTO_INCREMENT PRIMARY KEY,
-                                       name VARCHAR(50) NOT NULL,
-                                       employeeId INT NOT NULL,
-                                       relationShip VARCHAR(50) NOT NULL,
-                                       mobilePhone VARCHAR(15) NOT NULL,
+                                       id IDENTITY PRIMARY KEY,
+                                       name VARCHAR(150) NOT NULL,
+                                       employee_id BIGINT NOT NULL,
+                                       relationship VARCHAR(50) NOT NULL,
+                                       mobile_phone VARCHAR(15) NOT NULL,
                                        address VARCHAR(250) NOT NULL,
-                                       CONSTRAINT FK_EmergencyContact_Employee FOREIGN KEY (employeeId) REFERENCES tbl_employees(id) ON DELETE CASCADE
+
+                                       CONSTRAINT fk_emergency_contact_employee FOREIGN KEY (employee_id) REFERENCES tbl_employees(id) ON DELETE CASCADE
 );
 
 

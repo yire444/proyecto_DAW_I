@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class EmployeeRequestDto {
 
     @NotBlank(message = "El nombre es obligatorio")
-    @Size(max = 50, message="El nombre no puede superar los 50 caracteres")
+    @Size(max = 50, message = "El nombre no puede superar los 50 caracteres")
     private String name;
 
     @NotBlank(message = "El apellido es obligatorio")
@@ -38,38 +38,38 @@ public class EmployeeRequestDto {
 
     @NotBlank(message = "El correo personal es obligatorio")
     @Email(message = "El formato del correo personal no es válido")
-    @Size(max = 50, message = "El correo personal no puede superar los 50 caracteres")
+    @Size(max = 150, message = "El correo personal no puede superar los 150 caracteres")
     private String personalEmail;
 
     @NotNull(message = "El tipo de documento es obligatorio")
-    private Integer documentTypeId;
+    private Long documentTypeId;
 
     @NotBlank(message = "El número de documento es obligatorio")
     @Size(max = 12, message = "El número de documento no puede superar los 12 caracteres")
     private String documentNumber;
 
     @NotNull(message = "El puesto de trabajo es obligatorio")
-    private Integer jobPositionId;
+    private Long jobPositionId;
 
     @NotNull(message = "El departamento es obligatorio")
-    private Integer departamentId;
+    private Long departamentId;
 
     @NotNull(message = "La fecha de inicio es obligatoria")
     private LocalDate startDate;
 
     @NotNull(message = "El salario es obligatorio")
-    @DecimalMin(value = "0.00", inclusive = true, message = "El salario debe ser mayor o igual a 0")
+    @DecimalMin(value = "0.00", inclusive = true, message = "El salario debe ser mayor a 0")
     private BigDecimal salary;
 
     @NotNull(message = "El tipo de contrato es obligatorio")
-    private Integer contractTypeId;
+    private Long contractTypeId;
 
     @NotNull(message = "El turno de trabajo es obligatorio")
-    private Integer workShiftId;
+    private Long workShiftId;
 
     @NotNull(message = "El régimen de salud es obligatorio")
-    private Integer insuranceSchemeId;
+    private Long insuranceSchemeId;
 
     @NotNull(message = "El régimen de pensiones es obligatorio")
-    private Integer pensionSchemeId;
+    private Long pensionSchemeId;
 }

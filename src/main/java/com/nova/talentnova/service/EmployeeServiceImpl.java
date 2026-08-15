@@ -1,12 +1,15 @@
 package com.nova.talentnova.service;
 
+import com.nova.talentnova.GeneralStatus;
 import com.nova.talentnova.dto.EmployeeFilterDto;
 import com.nova.talentnova.dto.EmployeeRequestDto;
 import com.nova.talentnova.dto.EmployeeResponseDto;
 import com.nova.talentnova.mapper.EmployeeMapper;
 import com.nova.talentnova.model.*;
+import com.nova.talentnova.repository.ICompanyRepository;
 import com.nova.talentnova.repository.IEmployeeRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,8 @@ import java.util.stream.Collectors;
 public class EmployeeServiceImpl implements IEmployeeService {
 
     private final IEmployeeRepository employeeRepository;
+    private final ICompanyRepository companyRepository;
+    private final EmployeeMapper employeeMapper;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -28,11 +33,10 @@ public class EmployeeServiceImpl implements IEmployeeService {
     @Override
     @Transactional(readOnly = true)
     public List<EmployeeResponseDto> filterEmployees(EmployeeFilterDto filter) {
-        if (filter == null) {
-            filter = new EmployeeFilterDto();
-        }
+        Long companyId = null; // Se adaptará con JWT posteriormente
 
         List<Employee> employees = employeeRepository.filterEmployees(
+                companyId,
                 filter.getId(),
                 filter.getCorporateEmail(),
                 filter.getStatus(),
@@ -42,71 +46,99 @@ public class EmployeeServiceImpl implements IEmployeeService {
         );
 
         return employees.stream()
-                .map(EmployeeMapper::toResponseDto)
+                .map(employeeMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
     // BUSCAR POR ID
     @Override
     @Transactional(readOnly = true)
-    public EmployeeResponseDto findById(Integer id) {
+    public EmployeeResponseDto findById(Long id) {
         Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Empleado no encontrado con el ID: " + id));
-        return EmployeeMapper.toResponseDto(employee);
+                .orElseThrow(() -> new EntityNotFoundException("Empleado no encontrado con el ID: " + id));
+        return employeeMapper.toResponseDto(employee);
     }
 
     // REGISTRAR
     @Override
     @Transactional
     public EmployeeResponseDto registerEmployee(EmployeeRequestDto requestDto) {
-        // Validaciones exclusivas para el registro de un nuevo empleado
+        // VALIDAR DATOS REPETIDOS
         if (employeeRepository.existsByMobilePhone(requestDto.getMobilePhone())) {
-            throw new RuntimeException("El número de teléfono móvil ya se encuentra registrado.");
+            throw new IllegalArgumentException("Ya existe un empleado registrado con el teléfono móvil: " + requestDto.getMobilePhone());
         }
         if (employeeRepository.existsByPersonalEmail(requestDto.getPersonalEmail())) {
-            throw new RuntimeException("El correo personal ya se encuentra registrado.");
+            throw new IllegalArgumentException("Ya existe un empleado registrado con el correo personal: " + requestDto.getPersonalEmail());
         }
         if (employeeRepository.existsByDocumentNumber(requestDto.getDocumentNumber())) {
-            throw new RuntimeException("El número de documento ya se encuentra registrado.");
+            throw new IllegalArgumentException("Ya existe un empleado registrado con el número de documento: " + requestDto.getDocumentNumber());
         }
 
-        Employee employee = EmployeeMapper.toEntity(requestDto);
+        Employee employee = employeeMapper.toEntity(requestDto);
+
+        // ASIGNAR A EMPRESA
+        Long currentCompanyId = 1L;
+        Company company = companyRepository.findById(currentCompanyId)
+                .orElseThrow(() -> new EntityNotFoundException("Empresa no encontrada"));
+        employee.setCompany(company);
+
+        // ASIGNAR CATÁLOGOS CON GETREFERENCE (Optimizado)
         setCatalogs(employee, requestDto);
 
-        String corporateEmail = generateCorporateEmail(requestDto.getName(), requestDto.getLastname());
+        // GENERAR CORREO DINÁMICO USANDO EL DOMINIO REAL DE LA EMPRESA
+        String corporateEmail = generateCorporateEmail(employee.getName(), employee.getLastname(), company.getEmailCompany());
         employee.setCorporateEmail(corporateEmail);
 
-        Employee saved = employeeRepository.save(employee);
-        return EmployeeMapper.toResponseDto(saved);
+        // SE CREA ACTIVO
+        employee.setStatus(GeneralStatus.ACTIVE);
+
+        // GUARDAR
+        Employee savedEmployee = employeeRepository.save(employee);
+
+        return employeeMapper.toResponseDto(savedEmployee);
     }
 
     // ACTUALIZAR
     @Override
     @Transactional
-    public EmployeeResponseDto updateEmployee(Integer id, EmployeeRequestDto requestDto) {
+    public EmployeeResponseDto updateEmployee(Long id, EmployeeRequestDto requestDto) {
+        // EMPLEADO EXISTE
         Employee existingEmployee = employeeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Empleado no encontrado con el ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Empleado no encontrado con el ID: " + id));
 
+        // VALIDAR DATOS REPETIDOS (Excluyendo el propio ID)
+        if (employeeRepository.existsByMobilePhoneAndIdNot(requestDto.getMobilePhone(), id)) {
+            throw new IllegalArgumentException("El teléfono móvil ya está siendo usado por otro empleado.");
+        }
+        if (employeeRepository.existsByPersonalEmailAndIdNot(requestDto.getPersonalEmail(), id)) {
+            throw new IllegalArgumentException("El correo personal ya está siendo usado por otro empleado.");
+        }
+
+        // ACTUALIZAR DATOS EDITABLES
+        existingEmployee.setName(requestDto.getName());
+        existingEmployee.setLastname(requestDto.getLastname());
         existingEmployee.setAddress(requestDto.getAddress());
         existingEmployee.setMobilePhone(requestDto.getMobilePhone());
         existingEmployee.setPersonalEmail(requestDto.getPersonalEmail());
-        existingEmployee.setStartDate(requestDto.getStartDate());
         existingEmployee.setSalary(requestDto.getSalary());
 
+        // ACTUALIZAR DATOS DE CATÁLOGOS USANDO GETREFERENCE
         setCatalogs(existingEmployee, requestDto);
 
-        Employee updated = employeeRepository.save(existingEmployee);
-        return EmployeeMapper.toResponseDto(updated);
+        // GUARDAR
+        Employee updatedEmployee = employeeRepository.save(existingEmployee);
+
+        return employeeMapper.toResponseDto(updatedEmployee);
     }
 
-    // ELIMINAR
+    // ELIMINAR (Soft Delete)
     @Override
     @Transactional
-    public void deleteEmployee(Integer id) {
+    public void deleteEmployee(Long id) {
         Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Empleado no encontrado con el ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Empleado no encontrado con ID: " + id));
 
-        employee.setStatus(false);
+        employee.setStatus(GeneralStatus.INACTIVE);
         employeeRepository.save(employee);
     }
 
@@ -114,16 +146,15 @@ public class EmployeeServiceImpl implements IEmployeeService {
     private void setCatalogs(Employee employee, EmployeeRequestDto dto) {
         employee.setDocumentType(entityManager.getReference(DocumentType.class, dto.getDocumentTypeId()));
         employee.setJobPosition(entityManager.getReference(JobPosition.class, dto.getJobPositionId()));
-        employee.setDepartament(entityManager.getReference(WorkArea.class, dto.getDepartamentId()));
+        employee.setDepartment(entityManager.getReference(WorkArea.class, dto.getDepartamentId()));
         employee.setContractType(entityManager.getReference(ContractType.class, dto.getContractTypeId()));
         employee.setWorkShift(entityManager.getReference(WorkShift.class, dto.getWorkShiftId()));
         employee.setInsuranceScheme(entityManager.getReference(InsuranceScheme.class, dto.getInsuranceSchemeId()));
         employee.setPensionScheme(entityManager.getReference(PensionScheme.class, dto.getPensionSchemeId()));
     }
 
-    //GENERAR CORREO CORPORATIVO
-    private String generateCorporateEmail(String name, String lastname) {
-        //LIMPIAR LETRAS
+    // GENERAR CORREO CORPORATIVO DINÁMICO
+    private String generateCorporateEmail(String name, String lastname, String companyEmail) {
         String cleanName = name.trim().toLowerCase()
                 .replaceAll("[áàäâ]", "a").replaceAll("[éèëê]", "e")
                 .replaceAll("[íìïî]", "i").replaceAll("[óòöô]", "o")
@@ -134,12 +165,21 @@ public class EmployeeServiceImpl implements IEmployeeService {
                 .replaceAll("[íìïî]", "i").replaceAll("[óòöô]", "o")
                 .replaceAll("[úùüû]", "u").replaceAll("[^a-z]", "");
 
-        //2 LETRAS DEL NOMBRE
         String namePrefix = cleanName.length() >= 2 ? cleanName.substring(0, 2) : cleanName;
-
-        //PRIMER APELLIDO
         String firstLastname = cleanLastname.split(" ")[0];
 
-        return namePrefix + firstLastname + "@talentnova.com";
+        // Extraer dominio real de la empresa (Ej: contacto@tambo.pe -> @tambo.pe)
+        String domain = companyEmail.contains("@") ? companyEmail.substring(companyEmail.indexOf("@")) : "@talentnova.com";
+
+        String baseEmail = namePrefix + firstLastname + domain;
+        String finalEmail = baseEmail;
+        int counter = 1;
+
+        while (employeeRepository.findByCorporateEmail(finalEmail).isPresent()) {
+            finalEmail = namePrefix + firstLastname + counter + domain;
+            counter++;
+        }
+
+        return finalEmail;
     }
 }

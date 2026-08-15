@@ -1,13 +1,19 @@
 package com.nova.talentnova.dto;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class EmployeeFilterDto {
-    private Integer id;
+    private Long id;
     private String corporateEmail;
     private Boolean status;
-    private Integer workShiftId;
-    private Integer departamentId;
-    private Integer jobPositionId;
+    private Long workShiftId;
+    private Long departamentId;
+    private Long jobPositionId;
 }

@@ -8,18 +8,18 @@ import java.util.List;
 
 public interface IEmployeeService {
 
-    //LISTAR TODOS
+    // LISTAR CON FILTROS
     List<EmployeeResponseDto> filterEmployees(EmployeeFilterDto filter);
 
-    //BUSCAR POR ID
-    EmployeeResponseDto findById(Integer id);
+    // BUSCAR POR ID
+    EmployeeResponseDto findById(Long id);
 
-    //REGISTRAR
+    // REGISTRAR
     EmployeeResponseDto registerEmployee(EmployeeRequestDto requestDto);
 
-    //ACTUALIZAR
-    EmployeeResponseDto updateEmployee(Integer id, EmployeeRequestDto requestDto);
+    // ACTUALIZAR
+    EmployeeResponseDto updateEmployee(Long id, EmployeeRequestDto requestDto);
 
-    //ELIMINAR
-    void deleteEmployee(Integer id);
+    // ELIMINAR
+    void deleteEmployee(Long id);
 }

@@ -1,6 +1,8 @@
 package com.nova.talentnova.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -9,9 +11,11 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class EmployeeResponseDto {
 
-    private Integer id;
+    private Long id;
     private String name;
     private String lastname;
     private LocalDate birthdate;
@@ -20,23 +24,31 @@ public class EmployeeResponseDto {
     private String mobilePhone;
     private String personalEmail;
     private String corporateEmail;
-
-    private String documentTypeName;
     private String documentNumber;
-
-
-    private String jobPositionName;
-    private String departamentName;
     private LocalDate startDate;
     private BigDecimal salary;
-
-
-    private String contractTypeName;
-    private String workShiftName;
-    private String insuranceSchemeName;
-    private String pensionSchemeName;
-
-
     private Boolean status;
     private LocalDateTime createdAt;
+
+    //CATÁLOGOS
+    private Long documentTypeId;
+    private String documentTypeName;
+
+    private Long jobPositionId;
+    private String jobPositionName;
+
+    private Long departamentId;
+    private String departamentName;
+
+    private Long contractTypeId;
+    private String contractTypeName;
+
+    private Long workShiftId;
+    private String workShiftName;
+
+    private Long insuranceSchemeId;
+    private String insuranceSchemeName;
+
+    private Long pensionSchemeId;
+    private String pensionSchemeName;
 }

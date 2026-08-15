@@ -10,35 +10,40 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface IEmployeeRepository extends JpaRepository<Employee, Integer> {
+public interface IEmployeeRepository extends JpaRepository<Employee, Long> {
 
     // --- VALIDACIONES DE DUPLICADOS (PARA CREAR) ---
     boolean existsByMobilePhone(String mobilePhone);
     boolean existsByPersonalEmail(String personalEmail);
     boolean existsByDocumentNumber(String documentNumber);
 
-    // --- VALIDACIONES DE DUPLICADOS CON EXCLUSIÓN (PARA ACTUALIZAR) ---
-    // Ignoran el propio ID del empleado para permitir guardar si el correo o teléfono sigue siendo el suyo
-    boolean existsByMobilePhoneAndIdNot(String mobilePhone, Integer id);
-    boolean existsByPersonalEmailAndIdNot(String personalEmail, Integer id);
+    // --- VALIDACIONES DE DUPLICADOS PARA ACTUALIZAR ---
+    boolean existsByMobilePhoneAndIdNot(String mobilePhone, Long id);
+    boolean existsByPersonalEmailAndIdNot(String personalEmail, Long id);
 
-    // Búsqueda opcional útil para validaciones internas o autenticación
+    // Búsquedas directas
     Optional<Employee> findByCorporateEmail(String corporateEmail);
+    List<Employee> findByCompanyId(Long companyId);
 
-    // --- FILTROS AVANZADOS PARA EL LISTADO DE EMPLEADOS ---
-    @Query("SELECT e FROM Employee e WHERE " +
-           "(:id IS NULL OR e.id = :id) AND " +
-           "(:corporateEmail IS NULL OR e.corporateEmail LIKE %:corporateEmail%) AND " +
-           "(:status IS NULL OR e.status = :status) AND " +
-           "(:workShiftId IS NULL OR e.workShift.id = :workShiftId) AND " +
-           "(:departamentId IS NULL OR e.departament.id = :departamentId) AND " +
-           "(:jobPositionId IS NULL OR e.jobPosition.id = :jobPositionId)")
+    //FILTROS AVANZADOS PARA EL LISTADO DE EMPLEADOS
+    @Query("""
+            SELECT e 
+            FROM Employee e 
+            WHERE (:companyId IS NULL OR e.company.id = :companyId)
+            AND (:id IS NULL OR e.id = :id)
+            AND (:corporateEmail IS NULL OR e.corporateEmail LIKE %:corporateEmail%) 
+            AND (:status IS NULL OR e.status = :status) 
+            AND (:workShiftId IS NULL OR e.workShift.id = :workShiftId) 
+            AND (:departamentId IS NULL OR e.department.id = :departamentId) 
+            AND (:jobPositionId IS NULL OR e.jobPosition.id = :jobPositionId)
+            """)
     List<Employee> filterEmployees(
-            @Param("id") Integer id,
+            @Param("companyId") Long companyId,
+            @Param("id") Long id,
             @Param("corporateEmail") String corporateEmail,
             @Param("status") Boolean status,
-            @Param("workShiftId") Integer workShiftId,
-            @Param("departamentId") Integer departamentId,
-            @Param("jobPositionId") Integer jobPositionId
+            @Param("workShiftId") Long workShiftId,
+            @Param("departamentId") Long departamentId,
+            @Param("jobPositionId") Long jobPositionId
     );
 }

@@ -1,11 +1,12 @@
 package com.nova.talentnova.model;
 
+import com.nova.talentnova.GeneralStatus;
+import com.nova.talentnova.controller.GeneralStatusBooleanConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.DynamicInsert;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,7 +14,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tbl_employees")
-@DynamicInsert
 @Getter
 @Setter
 @AllArgsConstructor
@@ -23,7 +23,7 @@ public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "name", nullable = false, length = 50)
     private String name;
@@ -37,59 +37,65 @@ public class Employee {
     @Column(name = "gender", nullable = false, length = 1)
     private Character gender; // 'F' o 'M'
 
-    @Column(name = "address", length = 150)
+    @Column(name = "address", nullable = false, length = 150)
     private String address;
 
-    @Column(name = "MOBILE_PHONE", nullable = false, length = 15, unique = true)
+    @Column(name = "mobile_phone", nullable = false, unique = true, length = 15)
     private String mobilePhone;
 
-    @Column(name = "PERSONAL_EMAIL", nullable = false, length = 50, unique = true)
+    @Column(name = "personal_email", nullable = false, unique = true, length = 150)
     private String personalEmail;
 
-    @Column(name = "CORPORATE_EMAIL", length = 50, unique = true)
+    @Column(name = "corporate_email", unique = true, length = 50)
     private String corporateEmail;
 
-    @Column(name = "DOCUMENT_NUMBER", nullable = false, length = 12, unique = true)
+    @Column(name = "document_number", nullable = false, unique = true, length = 12)
     private String documentNumber;
 
-    @Column(name = "START_DATE", nullable = false)
+    @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
-    @Column(name = "salary", nullable = false, precision = 10, scale = 2)
-    private BigDecimal salary;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal salary = BigDecimal.ZERO;
 
-    @Column(name = "status", nullable = false)
-    private Boolean status;
+    @Convert(converter = GeneralStatusBooleanConverter.class)
+    @Column(nullable = false)
+    private GeneralStatus status = GeneralStatus.ACTIVE;
 
-    @Column(name = "CREATED_AT", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
+    // --- RELACIONES CON EMPRESA Y CATÁLOGOS ---
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "documentTypeId", nullable = false)
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company company;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "document_type_id", nullable = false)
     private DocumentType documentType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "jobPositionId", nullable = false)
+    @JoinColumn(name = "job_position_id", nullable = false)
     private JobPosition jobPosition;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "departamentId", nullable = false)
-    private WorkArea departament;
+    @JoinColumn(name = "department_id", nullable = false)
+    private WorkArea department;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contractTypeId", nullable = false)
+    @JoinColumn(name = "contract_type_id", nullable = false)
     private ContractType contractType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "workShiftId", nullable = false)
+    @JoinColumn(name = "work_shift_id", nullable = false)
     private WorkShift workShift;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "insuranceSchemeId", nullable = false)
+    @JoinColumn(name = "insurance_scheme_id", nullable = false)
     private InsuranceScheme insuranceScheme;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pensionSchemeId", nullable = false)
+    @JoinColumn(name = "pension_scheme_id", nullable = false)
     private PensionScheme pensionScheme;
 }

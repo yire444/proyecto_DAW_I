@@ -16,7 +16,7 @@ public interface IJobPositionRepository extends JpaRepository<JobPosition, Long>
     // Listar filtrando por estado
     List<JobPosition> findByStatus(GeneralStatus status);
 
-    // Buscar por nombre y estado (para evitar duplicados)
+    // Buscar por nombre y estado
     Optional<JobPosition> findByNameAndStatus(String name, GeneralStatus status);
 
     // Consulta avanzada para filtros
