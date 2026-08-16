@@ -19,7 +19,7 @@ public class EmergencyContactController {
 
     private final IEmergencyContactService contactService;
 
-    // 1. LISTAR CONTACTOS DEL EMPLEADO
+    //LISTAR POR EMPLEADO
     @GetMapping
     public ResponseEntity<List<EmergencyContactResponseDto>> getContactsByEmployee(@PathVariable Long employeeId) {
         return ResponseEntity.ok(contactService.findByEmployeeId(employeeId));

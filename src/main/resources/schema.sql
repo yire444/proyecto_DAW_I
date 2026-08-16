@@ -152,7 +152,7 @@ CREATE TABLE tbl_employee_bank_accounts (
                                             created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
                                             CONSTRAINT fk_bank_account_employee FOREIGN KEY (employee_id) REFERENCES tbl_employees(id) ON DELETE CASCADE,
-                                            CONSTRAINT fk_bank_account_bank FOREIGN KEY (bank_id) REFERENCES tbl_banks(id),
+                                            CONSTRAINT fk_bank_account_bank FOREIGN KEY (bank_id) REFERENCES tbl_bank(id),
                                             CONSTRAINT chk_bank_account_type CHECK (account_type IN ('Ahorros', 'Corriente'))
 );
 
@@ -173,31 +173,36 @@ CREATE TABLE tbl_emergency_contact (
 -- 3. MÓDULOS DE PAGOS Y TAREAS
 -- ==========================================
 
--- MÓDULO DE PAGOS (NÓMINA / PAYROLL)
-CREATE TABLE Payroll (
-                         id INT AUTO_INCREMENT PRIMARY KEY,
-                         employeeId INT NOT NULL,
-                         paymentDate DATE NOT NULL,
-                         periodStartDate DATE NOT NULL,
-                         periodEndDate DATE NOT NULL,
-                         baseSalary DECIMAL(10,2) NOT NULL,
-                         bonuses DECIMAL(10,2) DEFAULT 0.00,
-                         deductions DECIMAL(10,2) DEFAULT 0.00,
-                         netSalary DECIMAL(10,2) NOT NULL,
-                         status VARCHAR(20) DEFAULT 'Pagado',
-                         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--TABLAS DE PAGOS--
+CREATE TABLE tbl_payroll (
+                             id IDENTITY PRIMARY KEY,
+                             employee_id BIGINT NOT NULL,
+                             payment_date DATE NOT NULL,
+                             period_start_date DATE NOT NULL,
+                             period_end_date DATE NOT NULL,
+                             base_salary DECIMAL(10,2) NOT NULL,
+                             bonuses DECIMAL(10,2) DEFAULT 0.00,
+                             deductions DECIMAL(10,2) DEFAULT 0.00,
+                             net_salary DECIMAL(10,2) NOT NULL,
+                             payment_method VARCHAR(50) DEFAULT 'Transferencia',
+                             status VARCHAR(20) DEFAULT 'Pagado',
+                             notes VARCHAR(250),
+                             created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                         CONSTRAINT FK_Payroll_Employee FOREIGN KEY (employeeId) REFERENCES tbl_employees(id)
+                             CONSTRAINT fk_payroll_employee FOREIGN KEY (employee_id) REFERENCES tbl_employees(id) ON DELETE CASCADE
 );
 
 -- MÓDULO DE TAREAS Y PROYECTOS
-CREATE TABLE Projects (
-                          id INT AUTO_INCREMENT PRIMARY KEY,
-                          name VARCHAR(100) NOT NULL,
-                          description VARCHAR(255),
-                          startDate DATE NOT NULL,
-                          endDate DATE,
-                          status VARCHAR(20) DEFAULT 'Activo'
+CREATE TABLE tbl_projects (
+                              id INT AUTO_INCREMENT PRIMARY KEY,
+                              company_id INT NOT NULL, -- Para asociarlo a la empresa
+                              name VARCHAR(100) NOT NULL,
+                              description VARCHAR(255),
+                              startDate DATE NOT NULL,
+                              endDate DATE,
+                              status VARCHAR(20) DEFAULT 'Activo',
+
+                              CONSTRAINT FK_Projects_Company FOREIGN KEY (company_id) REFERENCES tbl_company(id)
 );
 
 CREATE TABLE Tasks (
