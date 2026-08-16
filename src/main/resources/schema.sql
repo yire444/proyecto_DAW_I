@@ -193,32 +193,33 @@ CREATE TABLE tbl_payroll (
 );
 
 -- MÓDULO DE TAREAS Y PROYECTOS
-CREATE TABLE tbl_projects (
-                              id INT AUTO_INCREMENT PRIMARY KEY,
-                              company_id INT NOT NULL, -- Para asociarlo a la empresa
-                              name VARCHAR(100) NOT NULL,
-                              description VARCHAR(255),
-                              startDate DATE NOT NULL,
-                              endDate DATE,
-                              status VARCHAR(20) DEFAULT 'Activo',
+CREATE TABLE tbl_project (
+                             id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                             company_id BIGINT NOT NULL,
+                             name VARCHAR(100) NOT NULL,
+                             description VARCHAR(255),
+                             area VARCHAR(100),
+                             start_date DATE NOT NULL,
+                             end_date DATE,
+                             status VARCHAR(20) NOT NULL,
 
-                              CONSTRAINT FK_Projects_Company FOREIGN KEY (company_id) REFERENCES tbl_company(id)
+                             CONSTRAINT FK_Projects_Company FOREIGN KEY (company_id) REFERENCES tbl_company(id)
 );
 
-CREATE TABLE Tasks (
-                       id INT AUTO_INCREMENT PRIMARY KEY,
-                       projectId INT NOT NULL,
-                       employeeId INT NOT NULL,
-                       title VARCHAR(100) NOT NULL,
-                       description VARCHAR(255),
-                       dueDate DATE,
-                       status VARCHAR(20) DEFAULT 'Pendiente',
-                       createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE tbl_task (
+                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                          project_id BIGINT NOT NULL,
+                          employee_id BIGINT NOT NULL,
+                          title VARCHAR(100) NOT NULL,
+                          description VARCHAR(255),
+                          due_date DATE,
+                          priority VARCHAR(20) NOT NULL,
+                          status VARCHAR(20) NOT NULL,
+                          created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                       CONSTRAINT FK_Tasks_Project FOREIGN KEY (projectId) REFERENCES Projects(id),
-                       CONSTRAINT FK_Tasks_Employee FOREIGN KEY (employeeId) REFERENCES tbl_employees(id)
+                          CONSTRAINT FK_Task_Project FOREIGN KEY (project_id) REFERENCES tbl_project(id),
+                          CONSTRAINT FK_Task_Employee FOREIGN KEY (employee_id) REFERENCES tbl_employees(id)
 );
-
 
 -- ==========================================
 -- 4. MÓDULO DE LICENCIAS DE SOFTWARE (SaaS / IA)
