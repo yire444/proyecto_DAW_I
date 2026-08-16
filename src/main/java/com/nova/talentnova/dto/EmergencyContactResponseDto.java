@@ -4,11 +4,10 @@ import lombok.Data;
 
 @Data
 public class EmergencyContactResponseDto {
-
-    private Integer id;
-    private Integer employeeId;
+    private Long id;
+    private Long employeeId;
     private String name;
-    private String relationShip;
+    private String relationship;
     private String mobilePhone;
     private String address;
 }

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface IEmergencyContactRepository extends JpaRepository<EmergencyContact, Integer> {
+public interface IEmergencyContactRepository extends JpaRepository<EmergencyContact, Long> {
 
     //LISTAR
-    List<EmergencyContact> findByEmployeeId(Integer employeeId);
+    List<EmergencyContact> findByEmployeeId(Long employeeId);
 }

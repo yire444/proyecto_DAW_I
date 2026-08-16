@@ -3,23 +3,27 @@ package com.nova.talentnova.mapper;
 import com.nova.talentnova.dto.EmergencyContactRequestDto;
 import com.nova.talentnova.dto.EmergencyContactResponseDto;
 import com.nova.talentnova.model.EmergencyContact;
+import com.nova.talentnova.model.Employee;
 
 public class EmergencyContactMapper {
 
-    public static EmergencyContact toEntity(EmergencyContactRequestDto dto) {
-        if (dto == null) {return null;}
+    // DTO -> ENTIDAD
+    public static EmergencyContact toEntity(EmergencyContactRequestDto dto, Employee employee) {
+        if (dto == null) return null;
 
         EmergencyContact contact = new EmergencyContact();
+        contact.setEmployee(employee);
         contact.setName(dto.getName());
-        contact.setRelationShip(dto.getRelationShip());
+        contact.setRelationship(dto.getRelationship());
         contact.setMobilePhone(dto.getMobilePhone());
         contact.setAddress(dto.getAddress());
 
         return contact;
     }
 
+    // ENTIDAD -> DTO
     public static EmergencyContactResponseDto toResponseDto(EmergencyContact entity) {
-        if (entity == null) {return null;}
+        if (entity == null) return null;
 
         EmergencyContactResponseDto dto = new EmergencyContactResponseDto();
         dto.setId(entity.getId());
@@ -27,7 +31,7 @@ public class EmergencyContactMapper {
             dto.setEmployeeId(entity.getEmployee().getId());
         }
         dto.setName(entity.getName());
-        dto.setRelationShip(entity.getRelationShip());
+        dto.setRelationship(entity.getRelationship());
         dto.setMobilePhone(entity.getMobilePhone());
         dto.setAddress(entity.getAddress());
 

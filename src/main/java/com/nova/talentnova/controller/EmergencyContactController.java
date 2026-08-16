@@ -12,44 +12,43 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/emergency-contact")
+@RequestMapping("/api/employees/{employeeId}/emergency-contacts")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class EmergencyContactController {
 
-    private final IEmergencyContactService emergencyContactService;
+    private final IEmergencyContactService contactService;
 
-    //LISTAR
-    @GetMapping("/employee/{employeeId}")
-    public ResponseEntity<List<EmergencyContactResponseDto>> findByEmployeeId(@PathVariable Integer employeeId) {
-        List<EmergencyContactResponseDto> contacts = emergencyContactService.findByEmployeeId(employeeId);
-        return ResponseEntity.ok(contacts);
+    // 1. LISTAR CONTACTOS DEL EMPLEADO
+    @GetMapping
+    public ResponseEntity<List<EmergencyContactResponseDto>> getContactsByEmployee(@PathVariable Long employeeId) {
+        return ResponseEntity.ok(contactService.findByEmployeeId(employeeId));
     }
 
     //REGISTRAR
-    @PostMapping("/employee/{employeeId}")
+    @PostMapping
     public ResponseEntity<EmergencyContactResponseDto> registerContact(
-            @PathVariable Integer employeeId,
+            @PathVariable Long employeeId,
             @Valid @RequestBody EmergencyContactRequestDto requestDto) {
-        
-        EmergencyContactResponseDto newContact = emergencyContactService.registerContact(employeeId, requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newContact);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(contactService.registerContact(employeeId, requestDto));
     }
 
     //ACTUALIZAR
-    @PutMapping("/{id}")
+    @PutMapping("/{contactId}")
     public ResponseEntity<EmergencyContactResponseDto> updateContact(
-            @PathVariable Integer id,
+            @PathVariable Long employeeId,
+            @PathVariable Long contactId,
             @Valid @RequestBody EmergencyContactRequestDto requestDto) {
-        
-        EmergencyContactResponseDto updatedContact = emergencyContactService.updateContact(id, requestDto);
-        return ResponseEntity.ok(updatedContact);
+        return ResponseEntity.ok(contactService.updateContact(contactId, requestDto));
     }
 
     //ELIMINAR
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteContact(@PathVariable Integer id) {
-        emergencyContactService.deleteContact(id);
+    @DeleteMapping("/{contactId}")
+    public ResponseEntity<Void> deleteContact(
+            @PathVariable Long employeeId,
+            @PathVariable Long contactId) {
+        contactService.deleteContact(contactId);
         return ResponseEntity.noContent().build();
     }
 }

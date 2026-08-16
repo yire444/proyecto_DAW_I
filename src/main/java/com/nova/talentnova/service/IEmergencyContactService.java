@@ -8,14 +8,14 @@ import java.util.List;
 public interface IEmergencyContactService {
 
     // LISTAR POR ID
-    List<EmergencyContactResponseDto> findByEmployeeId(Integer employeeId);
+    List<EmergencyContactResponseDto> findByEmployeeId(Long employeeId);
 
     // REGISTRAR
-    EmergencyContactResponseDto registerContact(Integer employeeId, EmergencyContactRequestDto requestDto);
+    EmergencyContactResponseDto registerContact(Long employeeId, EmergencyContactRequestDto requestDto);
 
     // ACTUALIZAR
-    EmergencyContactResponseDto updateContact(Integer id, EmergencyContactRequestDto requestDto);
+    EmergencyContactResponseDto updateContact(Long id, EmergencyContactRequestDto requestDto);
 
     // ELIMINAR
-    void deleteContact(Integer id);
+    void deleteContact(Long id);
 }

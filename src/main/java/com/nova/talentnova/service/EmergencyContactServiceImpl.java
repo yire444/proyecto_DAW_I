@@ -3,11 +3,11 @@ package com.nova.talentnova.service;
 import com.nova.talentnova.dto.EmergencyContactRequestDto;
 import com.nova.talentnova.dto.EmergencyContactResponseDto;
 import com.nova.talentnova.mapper.EmergencyContactMapper;
-import com.nova.talentnova.model.Employee;
 import com.nova.talentnova.model.EmergencyContact;
+import com.nova.talentnova.model.Employee;
 import com.nova.talentnova.repository.IEmergencyContactRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import com.nova.talentnova.repository.IEmployeeRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,55 +19,51 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EmergencyContactServiceImpl implements IEmergencyContactService {
 
-    private final IEmergencyContactRepository emergencyContactRepository;
+    private final IEmergencyContactRepository contactRepository;
+    private final IEmployeeRepository employeeRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    //LISTAR
     @Override
     @Transactional(readOnly = true)
-    public List<EmergencyContactResponseDto> findByEmployeeId(Integer employeeId) {
-        List<EmergencyContact> contacts = emergencyContactRepository.findByEmployeeId(employeeId);
-        return contacts.stream()
+    public List<EmergencyContactResponseDto> findByEmployeeId(Long employeeId) {
+        if (!employeeRepository.existsById(employeeId)) {
+            throw new EntityNotFoundException("Empleado no encontrado con ID: " + employeeId);
+        }
+        return contactRepository.findByEmployeeId(employeeId).stream()
                 .map(EmergencyContactMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
-    //REGISTRAR
     @Override
     @Transactional
-    public EmergencyContactResponseDto registerContact(Integer employeeId, EmergencyContactRequestDto requestDto) {
-        EmergencyContact contact = EmergencyContactMapper.toEntity(requestDto);
+    public EmergencyContactResponseDto registerContact(Long employeeId, EmergencyContactRequestDto requestDto) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EntityNotFoundException("Empleado no encontrado con ID: " + employeeId));
 
-        contact.setEmployee(entityManager.getReference(Employee.class, employeeId));
+        EmergencyContact contact = EmergencyContactMapper.toEntity(requestDto, employee);
+        EmergencyContact savedContact = contactRepository.save(contact);
 
-        EmergencyContact saved = emergencyContactRepository.save(contact);
-        return EmergencyContactMapper.toResponseDto(saved);
+        return EmergencyContactMapper.toResponseDto(savedContact);
     }
 
-    //ACTUALIZAR
     @Override
     @Transactional
-    public EmergencyContactResponseDto updateContact(Integer id, EmergencyContactRequestDto requestDto) {
-        EmergencyContact existingContact = emergencyContactRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Contacto de emergencia no encontrado con el ID: " + id));
+    public EmergencyContactResponseDto updateContact(Long id, EmergencyContactRequestDto requestDto) {
+        EmergencyContact contact = contactRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Contacto de emergencia no encontrado con ID: " + id));
 
-        existingContact.setRelationShip(requestDto.getRelationShip());
-        existingContact.setMobilePhone(requestDto.getMobilePhone());
-        existingContact.setAddress(requestDto.getAddress());
+        contact.setMobilePhone(requestDto.getMobilePhone());
+        contact.setAddress(requestDto.getAddress());
 
-        EmergencyContact updated = emergencyContactRepository.save(existingContact);
-        return EmergencyContactMapper.toResponseDto(updated);
+        EmergencyContact updatedContact = contactRepository.save(contact);
+        return EmergencyContactMapper.toResponseDto(updatedContact);
     }
 
-    //ELIMINAR
     @Override
     @Transactional
-    public void deleteContact(Integer id) {
-        if (!emergencyContactRepository.existsById(id)) {
-            throw new RuntimeException("Contacto de emergencia no encontrado con el ID: " + id);
+    public void deleteContact(Long id) {
+        if (!contactRepository.existsById(id)) {
+            throw new EntityNotFoundException("Contacto de emergencia no encontrado con ID: " + id);
         }
-        emergencyContactRepository.deleteById(id);
+        contactRepository.deleteById(id);
     }
 }
