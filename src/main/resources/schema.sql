@@ -227,12 +227,15 @@ CREATE TABLE tbl_task (
 
 CREATE TABLE tbl_software_license (
                                       id IDENTITY PRIMARY KEY,
+                                      company_id BIGINT NOT NULL,
                                       software_name VARCHAR(100) NOT NULL,
-                                      provider VARCHAR(50),
-                                      license_type VARCHAR(50) NOT NULL ,
+                                      provider VARCHAR(50) NOT NULL,
+                                      license_type VARCHAR(50) NOT NULL,
                                       total_keys INT NOT NULL,
                                       available_keys INT NOT NULL,
-                                      expiration_date DATE
+                                      expiration_date DATE,
+
+                                      CONSTRAINT fk_software_license_company FOREIGN KEY (company_id) REFERENCES tbl_company(id) ON DELETE CASCADE
 );
 
 -- SOLICITUDES DE LICENCIAS
