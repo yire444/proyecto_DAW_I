@@ -211,8 +211,8 @@ CREATE TABLE tbl_task (
                           project_id BIGINT NOT NULL,
                           employee_id BIGINT NOT NULL,
                           title VARCHAR(100) NOT NULL,
-                          description VARCHAR(255),
-                          due_date DATE,
+                          description VARCHAR(255) NOT NULL,
+                          due_date DATE NOT NULL,
                           priority VARCHAR(20) NOT NULL,
                           status VARCHAR(20) NOT NULL,
                           created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -225,41 +225,41 @@ CREATE TABLE tbl_task (
 -- 4. MÓDULO DE LICENCIAS DE SOFTWARE (SaaS / IA)
 -- ==========================================
 
-CREATE TABLE SoftwareLicenses (
-                                  id INT AUTO_INCREMENT PRIMARY KEY,
-                                  softwareName VARCHAR(100) NOT NULL,
-                                  provider VARCHAR(50),
-                                  licenseType VARCHAR(50) DEFAULT 'Suscripción Mensual',
-                                  totalKeys INT NOT NULL,
-                                  availableKeys INT NOT NULL,
-                                  expirationDate DATE
+CREATE TABLE tbl_software_license (
+                                      id IDENTITY PRIMARY KEY,
+                                      software_name VARCHAR(100) NOT NULL,
+                                      provider VARCHAR(50),
+                                      license_type VARCHAR(50) NOT NULL ,
+                                      total_keys INT NOT NULL,
+                                      available_keys INT NOT NULL,
+                                      expiration_date DATE
 );
 
-CREATE TABLE LicenseRequests (
-                                 id INT AUTO_INCREMENT PRIMARY KEY,
-                                 employeeId INT NOT NULL,
-                                 licenseId INT NOT NULL,
-                                 requestDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                                 justification VARCHAR(255),
-                                 status VARCHAR(20) DEFAULT 'Pendiente',
-                                 approvalDate TIMESTAMP NULL,
+-- SOLICITUDES DE LICENCIAS
+CREATE TABLE tbl_license_request (
+                                     id IDENTITY PRIMARY KEY,
+                                     employee_id BIGINT NOT NULL,
+                                     license_id BIGINT NOT NULL,
+                                     request_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                     justification VARCHAR(255),
+                                     status VARCHAR(20) NOT NULL,
+                                     approval_date TIMESTAMP NULL,
 
-                                 CONSTRAINT FK_LicenseRequests_Employee FOREIGN KEY (employeeId) REFERENCES tbl_employees(id),
-                                 CONSTRAINT FK_LicenseRequests_License FOREIGN KEY (licenseId) REFERENCES SoftwareLicenses(id)
+                                     CONSTRAINT fk_license_request_employee FOREIGN KEY (employee_id) REFERENCES tbl_employees(id) ON DELETE CASCADE,
+                                     CONSTRAINT fk_license_request_software FOREIGN KEY (license_id) REFERENCES tbl_software_license(id) ON DELETE CASCADE
 );
 
-CREATE TABLE AssignedLicenses (
-                                  id INT AUTO_INCREMENT PRIMARY KEY,
-                                  employeeId INT NOT NULL,
-                                  licenseId INT NOT NULL,
-                                  assignedDate DATE NOT NULL DEFAULT CURRENT_DATE,
-                                  revokedDate DATE NULL,
-                                  status VARCHAR(20) DEFAULT 'Activa',
+CREATE TABLE tbl_assigned_license (
+                                      id IDENTITY PRIMARY KEY,
+                                      employee_id BIGINT NOT NULL,
+                                      license_id BIGINT NOT NULL,
+                                      assigned_date DATE NOT NULL DEFAULT CURRENT_DATE,
+                                      revoked_date DATE NULL,
+                                      status VARCHAR(20) NOT NULL ,
 
-                                  CONSTRAINT FK_AssignedLicenses_Employee FOREIGN KEY (employeeId) REFERENCES tbl_employees(id),
-                                  CONSTRAINT FK_AssignedLicenses_License FOREIGN KEY (licenseId) REFERENCES SoftwareLicenses(id)
+                                      CONSTRAINT fk_assigned_license_employee FOREIGN KEY (employee_id) REFERENCES tbl_employees(id) ON DELETE CASCADE,
+                                      CONSTRAINT fk_assigned_license_software FOREIGN KEY (license_id) REFERENCES tbl_software_license(id) ON DELETE CASCADE
 );
-
 
 -- ==========================================
 -- 5. MÓDULO DE AUTENTICACIÓN Y SEGURIDAD
