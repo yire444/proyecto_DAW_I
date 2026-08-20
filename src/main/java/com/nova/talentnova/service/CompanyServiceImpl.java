@@ -74,15 +74,19 @@ public class CompanyServiceImpl implements ICompanyService {
         company.setCreatedDate(LocalDate.now());
         company.setVerificationCode(verificationCode);
 
-        //GUARDAR
         Company savedCompany = companyRepository.save(company);
 
         //ENVIAR CORREO
-        emailService.sendActivationEmail(
-                savedCompany.getEmailCompany(),
-                savedCompany.getNameCompany(),
-                verificationCode
-        );
+        try {
+            emailService.sendActivationEmail(
+                    savedCompany.getEmailCompany(),
+                    savedCompany.getNameCompany(),
+                    verificationCode
+            );
+        } catch (Exception e) {
+            // Imprimimos el código en la consola de IntelliJ para que lo tengas a la mano
+            System.out.println("Enviar código a consola: " + verificationCode);
+        }
 
         return companyMapper.toResponseDto(savedCompany);
     }
