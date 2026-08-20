@@ -43,4 +43,34 @@ public class EmailService {
             throw new RuntimeException("Error al enviar el correo electrónico de activación", e);
         }
     }
+
+    public void sendEmployeeWelcomeEmail
+            (String toEmail,
+             String employeeName,
+             String corporateEmail,
+             String tempPassword,
+             String activationToken
+            )
+    {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            Context context = new Context();
+            context.setVariable("employeeName", employeeName);
+            context.setVariable("corporateEmail", corporateEmail);
+            context.setVariable("tempPassword", tempPassword);
+            context.setVariable("activationToken", activationToken);
+
+            String htmlContent = templateEngine.process("employee-welcome", context);
+
+            helper.setTo(toEmail);
+            helper.setSubject("¡Tus credenciales de acceso a NOVA!");
+            helper.setText(htmlContent, true);
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Error al enviar el correo de bienvenida al empleado", e);
+        }
+    }
 }

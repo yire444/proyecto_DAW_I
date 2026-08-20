@@ -7,18 +7,15 @@ import java.util.List;
 
 public interface IWorkAreaService {
 
-    // LISTAR LAS ÁREAS DE TRABAJO
-    List<WorkAreaResponseDto> findAll();
+    //LISTAR POR EMPRESA
+    List<WorkAreaResponseDto> getAllWorkAreasByCompany(Long companyId);
 
-    // BUSCAR POR ID
-    WorkAreaResponseDto findById(Long id);
+    //REGISTRAR ÁREA DE TRABAJO POR EMPRESA
+    WorkAreaResponseDto createWorkArea(WorkAreaRequestDto requestDto, Long companyId);
 
-    // REGISTRAR NUEVA ÁREA DE TRABAJO
-    WorkAreaResponseDto registerWorkArea(WorkAreaRequestDto dto);
+    //ACTUALIZAR ÁREA DE TRABAJO POR EMPRESA
+    WorkAreaResponseDto updateWorkArea(Long id, WorkAreaRequestDto requestDto, Long companyId);
 
-    // ACTUALIZAR POR ID
-    WorkAreaResponseDto updateWorkArea(Long id, WorkAreaRequestDto dto);
-
-    // ELIMINAR O DESACTIVAR UN ÁREA DE TRABAJO
-    void deleteWorkArea(Long id);
+    //ELIMINAR POR EMPRESA
+    void deleteWorkArea(Long id, Long companyId);
 }

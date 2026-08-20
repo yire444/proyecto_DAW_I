@@ -1,16 +1,15 @@
 package com.nova.talentnova.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthResponseDto {
     private String token;
     private String type = "Bearer";
-    private String corporateEmail;
+    private String email;
     private String systemRole;
-    private Integer employeeId;
+    private Long id;
 }

@@ -1,4 +1,4 @@
-package com.nova.talentnova.service.impl; // O tu paquete correspondiente
+package com.nova.talentnova.service.impl;
 
 import com.nova.talentnova.GeneralStatus;
 import com.nova.talentnova.dto.WorkAreaRequestDto;
@@ -20,53 +20,63 @@ public class WorkAreaServiceImpl implements IWorkAreaService {
     private final IWorkAreaRepository repository;
     private final WorkAreaMapper mapper;
 
-    // LISTAR
+    // 1. LISTAR POR EMPRESA
     @Override
-    public List<WorkAreaResponseDto> findAll() {
-        return repository.findByStatus(GeneralStatus.ACTIVE).stream()
+    public List<WorkAreaResponseDto> getAllWorkAreasByCompany(Long companyId) {
+        //OBTENER ÁREA DE UNA EMPRESA Y LISTAR LAS ACTIVAS
+        return repository.findByCompanyId(companyId).stream()
+                .filter(workArea -> workArea.getStatus() == GeneralStatus.ACTIVE)
                 .map(mapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
-    // BUSCAR POR ID
+    //REGISTRAR ÁREA POR EMPRESA
     @Override
-    public WorkAreaResponseDto findById(Long id) {
-        WorkArea entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Área de trabajo no encontrada con ID: " + id));
-        return mapper.toResponseDto(entity);
-    }
+    public WorkAreaResponseDto createWorkArea(WorkAreaRequestDto requestDto, Long companyId) {
+        //VALIDAR SI YA EXISTE EL NOMBRE DEL ÁREA POR EMPRESA
+        boolean nameExists = repository.findByCompanyId(companyId).stream()
+                .anyMatch(workArea -> workArea.getName().equalsIgnoreCase(requestDto.getName())
+                        && workArea.getStatus() == GeneralStatus.ACTIVE);
 
-    // REGISTRAR
-    @Override
-    public WorkAreaResponseDto registerWorkArea(WorkAreaRequestDto dto) {
-        // Validar si ya existe una con el mismo nombre para evitar duplicados
-        if (repository.findByNameAndStatus(dto.getName(), GeneralStatus.ACTIVE).isPresent()) {
-            throw new RuntimeException("Ya existe un área de trabajo activa con el nombre: " + dto.getName());
+        if (nameExists) {
+            throw new RuntimeException("Ya existe un área de trabajo activa con el nombre: " + requestDto.getName() + " en su empresa.");
         }
 
-        WorkArea entity = mapper.toEntity(dto);
+        //GUARDAR
+        WorkArea entity = mapper.toEntity(requestDto, companyId);
         WorkArea savedEntity = repository.save(entity);
         return mapper.toResponseDto(savedEntity);
     }
 
-    // ACTUALIZAR POR ID
+    //ACTUALIZAR ÁREA POR EMPRESA
     @Override
-    public WorkAreaResponseDto updateWorkArea(Long id, WorkAreaRequestDto dto) {
+    public WorkAreaResponseDto updateWorkArea(Long id, WorkAreaRequestDto requestDto, Long companyId) {
         WorkArea existingEntity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Área de trabajo no encontrada con ID: " + id));
 
-        existingEntity.setName(dto.getName());
-        existingEntity.setDescription(dto.getDescription());
+        //VALIDAR QUE EL ÁREA PERTENECE A ESA EMPRESA
+        if (!existingEntity.getCompanyId().equals(companyId)) {
+            throw new RuntimeException("Acceso denegado: No tiene permisos para modificar esta área.");
+        }
+
+        //DATOS QUE PUEDE ACTUALIZAR
+        existingEntity.setName(requestDto.getName());
+        existingEntity.setDescription(requestDto.getDescription());
 
         WorkArea updatedEntity = repository.save(existingEntity);
         return mapper.toResponseDto(updatedEntity);
     }
 
-    // ELIMINAR
+    //ELIMINAR POR EMPRESA
     @Override
-    public void deleteWorkArea(Long id) {
+    public void deleteWorkArea(Long id, Long companyId) {
         WorkArea entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Área de trabajo no encontrada con ID: " + id));
+
+        // Validación de Seguridad Multi-tenant
+        if (!entity.getCompanyId().equals(companyId)) {
+            throw new RuntimeException("Acceso denegado: No tiene permisos para eliminar esta área.");
+        }
 
         entity.setStatus(GeneralStatus.INACTIVE);
         repository.save(entity);

@@ -1,5 +1,6 @@
 package com.nova.talentnova.repository;
 
+import com.nova.talentnova.GeneralStatus;
 import com.nova.talentnova.model.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -41,7 +42,7 @@ public interface IEmployeeRepository extends JpaRepository<Employee, Long> {
             @Param("companyId") Long companyId,
             @Param("id") Long id,
             @Param("corporateEmail") String corporateEmail,
-            @Param("status") Boolean status,
+            @Param("status") GeneralStatus status,
             @Param("workShiftId") Long workShiftId,
             @Param("departamentId") Long departamentId,
             @Param("jobPositionId") Long jobPositionId

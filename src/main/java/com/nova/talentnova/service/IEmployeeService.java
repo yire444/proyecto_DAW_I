@@ -1,8 +1,10 @@
 package com.nova.talentnova.service;
 
 import com.nova.talentnova.dto.EmployeeFilterDto;
+import com.nova.talentnova.dto.EmployeeProfileUpdateDto;
 import com.nova.talentnova.dto.EmployeeRequestDto;
 import com.nova.talentnova.dto.EmployeeResponseDto;
+import com.nova.talentnova.dto.EmployeeUpdateDto;
 
 import java.util.List;
 
@@ -17,9 +19,18 @@ public interface IEmployeeService {
     // REGISTRAR
     EmployeeResponseDto registerEmployee(EmployeeRequestDto requestDto);
 
-    // ACTUALIZAR
-    EmployeeResponseDto updateEmployee(Long id, EmployeeRequestDto requestDto);
+    // ACTIVAR CUENTA
+    void activateEmployee(String corporateEmail, String token);
 
-    // ELIMINAR
+    // LOGIN EMPLEADO
+    EmployeeResponseDto loginEmployee(String corporateEmail, String password);
+
+    // ACTUALIZAR (ADMIN)
+    EmployeeResponseDto updateEmployee(Long id, EmployeeUpdateDto updateDto);
+
+    // ACTUALIZAR PERFIL (EMPLEADO)
+    EmployeeResponseDto updateEmployeeProfile(Long id, EmployeeProfileUpdateDto dto);
+
+    // ELIMINAR / DESACTIVAR
     void deleteEmployee(Long id);
 }

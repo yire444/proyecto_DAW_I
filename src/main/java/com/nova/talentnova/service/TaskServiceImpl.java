@@ -64,6 +64,14 @@ public class TaskServiceImpl implements ITaskService {
                 .toList();
     }
 
+    //LISTAR TAREAS POR EMPLEADO
+    @Override
+    public List<TaskResponseDto> getTasksByEmployee(Long employeeId) {
+        return taskRepo.findByEmployeeId(employeeId).stream()
+                .map(taskMap::toResponseDto)
+                .toList();
+    }
+
     //FILTRAR TAREAS
     @Override
     public List<TaskResponseDto> filterTasks(TaskFilterDto filter) {

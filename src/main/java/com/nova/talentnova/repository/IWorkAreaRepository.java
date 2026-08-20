@@ -11,6 +11,9 @@ import java.util.Optional;
 @Repository
 public interface IWorkAreaRepository extends JpaRepository<WorkArea, Long> {
 
+    //LISTAR POR EMPRESA
+    List<WorkArea> findByCompanyId(Long companyId);
+
     // Para listar filtrando por estado (ej. GeneralStatus.ACTIVE)
     List<WorkArea> findByStatus(GeneralStatus status);
 

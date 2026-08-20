@@ -9,15 +9,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class WorkAreaMapper {
 
-    // Convierte DTO -> ENTITDAD
-    public WorkArea toEntity(WorkAreaRequestDto dto) {
+    // Convierte DTO -> ENTIDAD
+    public WorkArea toEntity(WorkAreaRequestDto dto, Long companyId) {
         if (dto == null) {
             return null;
         }
         WorkArea workArea = new WorkArea();
+        workArea.setCompanyId(companyId);
         workArea.setName(dto.getName());
         workArea.setDescription(dto.getDescription());
-        workArea.setStatus(GeneralStatus.ACTIVE); // 👈 Corregido aquí
+        workArea.setStatus(GeneralStatus.ACTIVE);
         return workArea;
     }
 

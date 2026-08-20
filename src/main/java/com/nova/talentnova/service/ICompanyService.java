@@ -16,7 +16,7 @@ public interface ICompanyService {
     void activateCompany(String email, String code);
 
     //R: LOGIN
-    String loginCompany(String email, String password);
+    Long loginCompany(String email, String password);
 
     //R: LISTAR Y FILTRAR
     List<CompanyResponseDto> filterCompanies(CompanyFilterDto dto);

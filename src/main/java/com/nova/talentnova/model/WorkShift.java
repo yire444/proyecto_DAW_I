@@ -21,7 +21,7 @@ public class WorkShift {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name", nullable = false, unique = true, length = 50)
+    @Column(name = "name", nullable = false, length = 50)
     private String name;
 
     @Column(name = "startTime", nullable = false)
@@ -29,4 +29,8 @@ public class WorkShift {
 
     @Column(name = "endTime", nullable = false)
     private LocalTime endTime;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company company;
 }

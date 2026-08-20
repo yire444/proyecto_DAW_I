@@ -14,6 +14,9 @@ public interface ITaskService {
     //LISTAR TODAS LAS TAREAS
     List<TaskResponseDto> getTasksByCompany(Long companyId);
 
+    //LISTAR TAREAS POR EMPLEADO
+    List<TaskResponseDto> getTasksByEmployee(Long employeeId);
+
     //LISTAR TAREAS POR PROYECTO
     List<TaskResponseDto> getTasksByProject(Long projectId);
 

@@ -16,17 +16,29 @@ public class JwtUtils {
     //TOKEN VENCE EN 24 HORAS
     private final long EXPIRATION_TIME = 86400000;
 
-    //GENERAR TOKEN CON CORREO CORPORATIVO
-    public String generateToken(String corporateEmail) {
+    //GENERAR TOKEN
+    public String generateToken(String corporateEmail, Long companyId) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + EXPIRATION_TIME);
 
         return Jwts.builder()
                 .setSubject(corporateEmail)
+                .claim("companyId", companyId)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    //OBTENER TOKEN
+    public Long getCompanyIdFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.get("companyId", Long.class);
     }
 
     //OBTENER CORREO

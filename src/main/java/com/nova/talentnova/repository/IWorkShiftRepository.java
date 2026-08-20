@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface IWorkShiftRepository extends JpaRepository<WorkShift, Long> {
 
-    Optional<WorkShift> findByName(String name);
+    Optional<WorkShift> findByCompanyIdAndName(Long companyId, String name);
 }

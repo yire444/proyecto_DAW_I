@@ -1,29 +1,18 @@
 package com.nova.talentnova.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Getter
 @Setter
-public class EmployeeRequestDto {
-
-    @NotBlank(message = "El nombre es obligatorio")
-    @Size(max = 50, message = "El nombre no puede tener más de 50 caracteres")
-    private String name;
-
-    @NotBlank(message = "El apellido es obligatorio")
-    @Size(max = 50, message = "El apellido no puede tener más de 50 caracteres")
-    private String lastname;
-
-    @NotNull(message = "La fecha de nacimiento es obligatoria")
-    private LocalDate birthdate;
-
-    @NotNull(message = "El género es obligatorio")
-    private String gender; // 'F' o 'M'
+public class EmployeeUpdateDto {
 
     @NotBlank(message = "La dirección es obligatoria")
     @Size(max = 150, message = "La dirección no puede tener más de 150 caracteres")
@@ -38,25 +27,15 @@ public class EmployeeRequestDto {
     @Size(max = 150, message = "El correo personal no puede tener más de 150 caracteres")
     private String personalEmail;
 
-    @NotNull(message = "El ID del tipo de documento es obligatorio")
-    private Long documentTypeId;
-
-    @NotBlank(message = "El número de documento es obligatorio")
-    @Size(max = 12, message = "El número de documento no puede tener más de 12 caracteres")
-    private String documentNumber;
+    @NotNull(message = "El salario es obligatorio")
+    @Positive(message = "El salario debe ser mayor a cero")
+    private BigDecimal salary;
 
     @NotNull(message = "El puesto de trabajo es obligatorio")
     private Long jobPositionId;
 
     @NotNull(message = "El departamento es obligatorio")
     private Long departmentId;
-
-    @NotNull(message = "La fecha de inicio es obligatoria")
-    private LocalDate startDate;
-
-    @NotNull(message = "El salario es obligatorio")
-    @DecimalMin(value = "0.00", message = "El salario no puede ser negativo")
-    private BigDecimal salary;
 
     @NotNull(message = "El tipo de contrato es obligatorio")
     private Long contractTypeId;
@@ -67,6 +46,6 @@ public class EmployeeRequestDto {
     @NotNull(message = "El esquema de seguro es obligatorio")
     private Long insuranceSchemeId;
 
-    @NotNull(message = "El régimen pensionista es obligatorio")
+    @NotNull(message = "El régimen de pensiones es obligatorio")
     private Long pensionSchemeId;
 }

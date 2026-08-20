@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/task")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class TaskController {
 
     private final ITaskService taskService;
@@ -40,6 +41,12 @@ public class TaskController {
     public ResponseEntity<List<TaskResponseDto>> getTasksByProject(@PathVariable Long projectId) {
         List<TaskResponseDto> tasks = taskService.getTasksByProject(projectId);
         return ResponseEntity.ok(tasks);
+    }
+
+    //LISTAR TAREAS POR EMPLEADO
+    @GetMapping("/employee/{employeeId}")
+    public ResponseEntity<List<TaskResponseDto>> getTasksByEmployee(@PathVariable Long employeeId) {
+        return ResponseEntity.ok(taskService.getTasksByEmployee(employeeId));
     }
 
     //FILTRAR TAREAS

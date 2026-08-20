@@ -1,6 +1,7 @@
 package com.nova.talentnova.controller;
 
 import com.nova.talentnova.dto.EmployeeFilterDto;
+import com.nova.talentnova.dto.EmployeeProfileUpdateDto;
 import com.nova.talentnova.dto.EmployeeRequestDto;
 import com.nova.talentnova.dto.EmployeeResponseDto;
 import com.nova.talentnova.service.IEmployeeService;
@@ -9,8 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.nova.talentnova.dto.EmployeeUpdateDto;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/employee")
@@ -37,17 +40,51 @@ public class EmployeeController {
         return ResponseEntity.ok(employee);
     }
 
-    // REGISTRAR
-    @PostMapping
-    public ResponseEntity<EmployeeResponseDto> registerEmployee(@Valid @RequestBody EmployeeRequestDto requestDto) {
+    //REGISTRAR
+    @PostMapping("/register")
+    public ResponseEntity<EmployeeResponseDto> registerEmployee(
+            @Valid @RequestBody EmployeeRequestDto requestDto
+    ) {
         EmployeeResponseDto newEmployee = employeeService.registerEmployee(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(newEmployee);
     }
 
-    // ACTUALIZAR
+    //ACTIVAR CUENTA
+    @PostMapping("/activate-employee")
+    public ResponseEntity<Map<String, String>> activateAccount(@RequestBody Map<String, String> request) {
+        String corporateEmail = request.get("corporateEmail");
+        String token = request.get("token");
+
+        employeeService.activateEmployee(corporateEmail, token);
+        return ResponseEntity.ok(Map.of("message", "Cuenta activada exitosamente. Ya puedes iniciar sesión."));
+    }
+
+    //LOGIN EMPLEADO
+    @PostMapping("/login")
+    public ResponseEntity<EmployeeResponseDto> loginEmployee(@RequestBody Map<String, String> credentials) {
+        String corporateEmail = credentials.get("corporateEmail");
+        String password = credentials.get("password");
+
+        EmployeeResponseDto employee = employeeService.loginEmployee(corporateEmail, password);
+        return ResponseEntity.ok(employee);
+    }
+
+    //ACTUALIZAR EMPLEADO
+    @PutMapping("/{id}/profile")
+    public ResponseEntity<EmployeeResponseDto> updateEmployeeProfile(
+            @PathVariable Long id,
+            @Valid @RequestBody EmployeeProfileUpdateDto dto) {
+        EmployeeResponseDto updatedProfile = employeeService.updateEmployeeProfile(id, dto);
+        return ResponseEntity.ok(updatedProfile);
+    }
+
+    // ACTUALIZAR EMPLEADO EMPRESA
     @PutMapping("/{id}")
-    public ResponseEntity<EmployeeResponseDto> updateEmployee(@PathVariable Long id, @Valid @RequestBody EmployeeRequestDto requestDto) { // Cambiado a Long
-        EmployeeResponseDto updatedEmployee = employeeService.updateEmployee(id, requestDto);
+    public ResponseEntity<EmployeeResponseDto> updateEmployee(
+            @PathVariable Long id,
+            @Valid @RequestBody EmployeeUpdateDto updateDto
+    ) {
+        EmployeeResponseDto updatedEmployee = employeeService.updateEmployee(id, updateDto);
         return ResponseEntity.ok(updatedEmployee);
     }
 

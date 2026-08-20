@@ -4,5 +4,6 @@ import com.nova.talentnova.dto.AuthResponseDto;
 import com.nova.talentnova.dto.LoginRequestDto;
 
 public interface IAuthService {
-    AuthResponseDto login(LoginRequestDto request);
+    AuthResponseDto loginEmployee(LoginRequestDto request);
+    AuthResponseDto loginCompany(LoginRequestDto request);
 }

@@ -103,9 +103,9 @@ public class CompanyServiceImpl implements ICompanyService {
         companyRepository.save(company);
     }
 
-    // LOGIN DE EMPRESA
+    //LOGIN DE EMPRESA
     @Override
-    public String loginCompany(String email, String password) {
+    public Long loginCompany(String email, String password) {
         Company company = companyRepository.findByEmailCompany(email)
                 .orElseThrow(() -> new RuntimeException("Correo o contraseña incorrectos"));
 
@@ -117,7 +117,8 @@ public class CompanyServiceImpl implements ICompanyService {
             throw new RuntimeException("Correo o contraseña incorrectos");
         }
 
-        return "¡Login exitoso! Bienvenido " + company.getNameCompany();
+        // Retornamos el ID de la empresa para que el Controlador pueda generar el Token
+        return company.getId();
     }
 
     //LISTAR Y FILTRAR

@@ -3,9 +3,12 @@ package com.nova.talentnova.service;
 import com.nova.talentnova.dto.WorkShiftRequestDTO;
 import com.nova.talentnova.dto.WorkShiftResponseDTO;
 import com.nova.talentnova.mapper.WorkShiftMapper;
+import com.nova.talentnova.model.Company;
 import com.nova.talentnova.model.WorkShift;
+import com.nova.talentnova.repository.ICompanyRepository;
 import com.nova.talentnova.repository.IWorkShiftRepository;
-import com.nova.talentnova.service.IWorkShiftService;
+import com.nova.talentnova.security.JwtUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +21,13 @@ public class WorkShiftServiceImpl implements IWorkShiftService {
 
     private final IWorkShiftRepository repository;
     private final WorkShiftMapper mapper;
+    private final ICompanyRepository companyRepository;
 
-    //LISTAR
+    // Inyectamos esto para leer el token directamente
+    private final HttpServletRequest request;
+    private final JwtUtils jwtUtils;
+
+    // LISTAR
     @Override
     public List<WorkShiftResponseDTO> findAll() {
         return repository.findAll().stream()
@@ -27,7 +35,7 @@ public class WorkShiftServiceImpl implements IWorkShiftService {
                 .collect(Collectors.toList());
     }
 
-    //BUSCAR POR ID
+    // BUSCAR POR ID
     @Override
     public WorkShiftResponseDTO findById(Long id) {
         WorkShift entity = repository.findById(id)
@@ -35,18 +43,41 @@ public class WorkShiftServiceImpl implements IWorkShiftService {
         return mapper.toResponseDTO(entity);
     }
 
-    //REGISTRAR
+    // REGISTRAR (A prueba de fallos)
     @Override
     public WorkShiftResponseDTO register(WorkShiftRequestDTO dto) {
-        if (repository.findByName(dto.getName()).isPresent()) {
-            throw new RuntimeException("Ya existe un turno de trabajo con el nombre: " + dto.getName());
+
+        // 1. Extraer el token de la petición HTTP
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("No se encontró el token de autorización en la petición.");
         }
-        WorkShift entity = mapper.toEntity(dto);
-        WorkShift saved = repository.save(entity);
-        return mapper.toResponseDTO(saved);
+        String token = authHeader.substring(7);
+
+        // 2. Extraer el ID exacto de la empresa directamente del token
+        Long companyId = jwtUtils.getCompanyIdFromToken(token);
+
+        // 3. Buscar la empresa por su ID (¡Esto no falla por espacios ni mayúsculas!)
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new RuntimeException("No se encontró la empresa activa con ID: " + companyId));
+
+        // 4. Validar duplicidad
+        if (repository.findByCompanyIdAndName(company.getId(), dto.getName()).isPresent()) {
+            throw new RuntimeException("Ya existe un turno activo con el nombre: " + dto.getName());
+        }
+
+        // 5. Mapear y guardar
+        WorkShift entity = new WorkShift();
+        entity.setName(dto.getName());
+        entity.setStartTime(dto.getStartTime());
+        entity.setEndTime(dto.getEndTime());
+        entity.setCompany(company);
+
+        WorkShift savedEntity = repository.save(entity);
+        return mapper.toResponseDTO(savedEntity);
     }
 
-    //ACTUALIZAR
+    // ACTUALIZAR
     @Override
     public WorkShiftResponseDTO update(Long id, WorkShiftRequestDTO dto) {
         WorkShift existing = repository.findById(id)
@@ -60,7 +91,7 @@ public class WorkShiftServiceImpl implements IWorkShiftService {
         return mapper.toResponseDTO(updated);
     }
 
-    //ELIMINAR
+    // ELIMINAR
     @Override
     public void delete(Long id) {
         WorkShift entity = repository.findById(id)

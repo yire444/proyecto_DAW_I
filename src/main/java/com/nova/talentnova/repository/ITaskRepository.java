@@ -20,6 +20,9 @@ public interface ITaskRepository extends JpaRepository<Task, Long> {
     //LISTAR TAREAS POR PROYECTO
     List<Task> findByProjectId(Long projectId);
 
+    //LISTAR TAREAS POR EMPLEADO
+    List<Task> findByEmployeeId(Long employeeId);
+
     //FILTROS DINÁMICOS PARA LAS TAREAS
     @Query("""
         SELECT t

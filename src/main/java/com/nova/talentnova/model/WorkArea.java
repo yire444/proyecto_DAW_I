@@ -21,7 +21,10 @@ public class WorkArea {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 50, unique = true)
+    @Column(name = "company_id", nullable = false)
+    private Long companyId;
+
+    @Column(name = "name", nullable = false, length = 50)
     private String name;
 
     @Column(name = "description", nullable = false, length = 255)

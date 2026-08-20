@@ -1,6 +1,7 @@
 package com.nova.talentnova.model;
 
 import com.nova.talentnova.GeneralStatus;
+import com.nova.talentnova.SystemRole;
 import com.nova.talentnova.controller.GeneralStatusBooleanConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -35,7 +36,7 @@ public class Employee {
     private LocalDate birthdate;
 
     @Column(name = "gender", nullable = false, length = 1)
-    private Character gender; // 'F' o 'M'
+    private String gender;
 
     @Column(name = "address", nullable = false, length = 150)
     private String address;
@@ -60,12 +61,21 @@ public class Employee {
 
     @Convert(converter = GeneralStatusBooleanConverter.class)
     @Column(nullable = false)
-    private GeneralStatus status = GeneralStatus.ACTIVE;
+    private GeneralStatus status = GeneralStatus.PENDING;
+
+    @Column(name = "password_hash")
+    private String passwordHash;
+
+    @Column(name = "activation_token", length = 100)
+    private String activationToken;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "system_role", nullable = false, length = 20)
+    private SystemRole systemRole = SystemRole.EMPLOYEE;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    // --- RELACIONES CON EMPRESA Y CATÁLOGOS ---
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/assigned-licenses")
+@RequestMapping("/api/assigned-license")
 @RequiredArgsConstructor
 public class AssignedLicenseController {
 

@@ -16,9 +16,15 @@ public class AuthController {
 
     private final IAuthService authService;
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody LoginRequestDto request) {
-        AuthResponseDto response = authService.login(request);
+    @PostMapping("/login-employee")
+    public ResponseEntity<AuthResponseDto> loginEmployee(@Valid @RequestBody LoginRequestDto request) {
+        AuthResponseDto response = authService.loginEmployee(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/login-company")
+    public ResponseEntity<AuthResponseDto> loginCompany(@Valid @RequestBody LoginRequestDto request) {
+        AuthResponseDto response = authService.loginCompany(request);
         return ResponseEntity.ok(response);
     }
 }

@@ -49,9 +49,12 @@ CREATE TABLE tbl_company (
 -- DEPARTAMENTOS DE TRABAJO
 CREATE TABLE tbl_work_area (
                                id IDENTITY PRIMARY KEY,
-                               name VARCHAR(50) NOT NULL UNIQUE,
+                               company_id BIGINT NOT NULL,
+                               name VARCHAR(50) NOT NULL,
                                description VARCHAR(255) NOT NULL,
-                               status BOOLEAN NOT NULL DEFAULT TRUE
+                               status BOOLEAN NOT NULL DEFAULT TRUE,
+                               CONSTRAINT fk_work_area_company FOREIGN KEY (company_id) REFERENCES tbl_company(id),
+                               CONSTRAINT uk_company_work_area UNIQUE (company_id, name)
 );
 
 CREATE TABLE tbl_job_position (
@@ -71,10 +74,13 @@ CREATE TABLE tbl_contract_type (
 
 -- HORARIOS / TURNOS DE TRABAJO
 CREATE TABLE tbl_work_shift (
-                                 id IDENTITY PRIMARY KEY,
-                                 name VARCHAR(50) NOT NULL UNIQUE,
-                                 startTime TIME NOT NULL,
-                                 endTime TIME NOT NULL
+                                id IDENTITY PRIMARY KEY,
+                                name VARCHAR(50) NOT NULL,
+                                startTime TIME NOT NULL,
+                                endTime TIME NOT NULL,
+                                company_id BIGINT NOT NULL,
+                                CONSTRAINT fk_work_shift_company FOREIGN KEY (company_id) REFERENCES tbl_company(id),
+                                CONSTRAINT uk_company_shift_name UNIQUE (company_id, name)
 );
 
 -- SEGUROS MEDICOS
@@ -99,10 +105,8 @@ CREATE TABLE tbl_bank (
 -- ==========================================
 -- 2. TABLAS PRINCIPALES (EMPLEADOS)
 -- ==========================================
-
--- TABLE EMPLOYEE
 -- ==========================================
--- TABLA PRINCIPAL: EMPLEADOS
+-- TABLA PRINCIPAL: EMPLEADOS (CON ACCESO Y SEGURIDAD INTEGRADOS)
 -- ==========================================
 CREATE TABLE tbl_employees (
                                id IDENTITY PRIMARY KEY,
@@ -126,6 +130,12 @@ CREATE TABLE tbl_employees (
                                insurance_scheme_id BIGINT NOT NULL,
                                pension_scheme_id BIGINT NOT NULL,
                                status BOOLEAN NOT NULL DEFAULT TRUE,
+
+                               password_hash VARCHAR(255) NULL,
+                               activation_token VARCHAR(100) NULL,
+                               is_activated BOOLEAN NOT NULL DEFAULT FALSE,
+                               system_role VARCHAR(20) NOT NULL DEFAULT 'EMPLOYEE',
+
                                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
                                CONSTRAINT fk_employee_company FOREIGN KEY (company_id) REFERENCES tbl_company(id),
@@ -262,21 +272,4 @@ CREATE TABLE tbl_assigned_license (
 
                                       CONSTRAINT fk_assigned_license_employee FOREIGN KEY (employee_id) REFERENCES tbl_employees(id) ON DELETE CASCADE,
                                       CONSTRAINT fk_assigned_license_software FOREIGN KEY (license_id) REFERENCES tbl_software_license(id) ON DELETE CASCADE
-);
-
--- ==========================================
--- 5. MÓDULO DE AUTENTICACIÓN Y SEGURIDAD
--- ==========================================
-
-CREATE TABLE tbl_user_credentials (
-                                      id INT AUTO_INCREMENT PRIMARY KEY,
-                                      employeeId INT NOT NULL UNIQUE,
-                                      passwordHash VARCHAR(255) NOT NULL,
-                                      activationToken VARCHAR(100) NULL,
-                                      tokenExpiration TIMESTAMP NULL,
-                                      isActivated BOOLEAN NOT NULL DEFAULT FALSE,
-                                      systemRole VARCHAR(20) NOT NULL DEFAULT 'USER',
-                                      createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-                                      CONSTRAINT FK_UserCredentials_Employee FOREIGN KEY (employeeId) REFERENCES tbl_employees(id) ON DELETE CASCADE
 );

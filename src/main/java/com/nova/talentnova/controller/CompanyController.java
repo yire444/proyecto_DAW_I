@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/companie")
+@RequestMapping("/api/company")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class CompanyController {
@@ -31,7 +31,7 @@ public class CompanyController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    //ACTIVAR CUENTA
+    //ACTIVAR CUENTA DE EMPRESA
     @PostMapping("/activate")
     public ResponseEntity<Map<String, String>> activateCompany(@RequestParam String email, @RequestParam String code) {
         companyService.activateCompany(email, code);
@@ -44,11 +44,15 @@ public class CompanyController {
         String email = credentials.get("email");
         String password = credentials.get("password");
 
-        String message = companyService.loginCompany(email, password);
-        String token = jwtUtils.generateToken(email);
+        //VALIDAMOS ESTE
+        Long companyId = companyService.loginCompany(email, password);
 
+        //OBTENER ID
+        String token = jwtUtils.generateToken(email, companyId);
+
+        //
         return ResponseEntity.ok(Map.of(
-                "message", message,
+                "message", "¡Login exitoso!",
                 "token", token
         ));
     }
