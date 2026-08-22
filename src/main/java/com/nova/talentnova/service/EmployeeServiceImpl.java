@@ -121,13 +121,22 @@ public class EmployeeServiceImpl implements IEmployeeService {
 
         Employee savedEmployee = employeeRepository.save(employee);
 
-        emailService.sendEmployeeWelcomeEmail(
-                savedEmployee.getPersonalEmail(),
-                savedEmployee.getName(),
-                savedEmployee.getCorporateEmail(),
-                tempPassword,
-                savedEmployee.getActivationToken()
-        );
+        try {
+            emailService.sendEmployeeWelcomeEmail(
+                    savedEmployee.getPersonalEmail(),
+                    savedEmployee.getName(),
+                    savedEmployee.getCorporateEmail(),
+                    tempPassword,
+                    savedEmployee.getActivationToken()
+            );
+        } catch (Exception e) {
+            System.out.println("\n==================================================");
+            System.out.println(">>> CREDENCIALES DE EMPLEADO");
+            System.out.println(">>> Correo Corporativo: " + savedEmployee.getCorporateEmail());
+            System.out.println(">>> Contraseña Temporal: " + tempPassword);
+            System.out.println(">>> Token de Activación: " + savedEmployee.getActivationToken());
+            System.out.println("==================================================\n");
+        }
 
         return employeeMapper.toResponseDto(savedEmployee);
     }
