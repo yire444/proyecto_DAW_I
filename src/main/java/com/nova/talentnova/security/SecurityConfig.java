@@ -35,17 +35,25 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        //DATOS PUBLICOS
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/employee/**").permitAll()
                         .requestMatchers("/api/document-type/**").permitAll()
                         .requestMatchers("/api/plan-type/**").permitAll()
                         .requestMatchers("/api/billing-cycle/**").permitAll()
-                        .requestMatchers("/api/company/**").permitAll()
-                        .requestMatchers("/api/work-area/**").permitAll()
-                        .requestMatchers("/api/job-position/**").permitAll()
-                        .requestMatchers("/api/work-shift/**").permitAll()
-                        .requestMatchers("/api/project/**").permitAll()
-                        .requestMatchers("/api/task/**").permitAll()
+                        .requestMatchers("/api/company/register").permitAll()
+                        .requestMatchers("/api/company/activate").permitAll()
+                        .requestMatchers("/api/company/login").permitAll()
+                        .requestMatchers("/api/employee/login").permitAll()
+                        .requestMatchers("/api/employee/activate-employee").permitAll()
+
+
+                        //DATOS PRIVADOS
+                        .requestMatchers("/api/employee/**").authenticated()
+                        .requestMatchers("/api/work-area/**").authenticated()
+                        .requestMatchers("/api/job-position/**").authenticated()
+                        .requestMatchers("/api/work-shift/**").authenticated()
+                        .requestMatchers("/api/project/**").authenticated()
+                        .requestMatchers("/api/task/**").authenticated()
                         .anyRequest().authenticated()
                 ).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

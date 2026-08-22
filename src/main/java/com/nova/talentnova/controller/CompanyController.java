@@ -40,7 +40,7 @@ public class CompanyController {
 
     //LOGIN
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> loginCompany(@RequestBody Map<String, String> credentials) {
+    public ResponseEntity<Map<String, Object>> loginCompany(@RequestBody Map<String, String> credentials) {
         String email = credentials.get("email");
         String password = credentials.get("password");
 
@@ -50,10 +50,11 @@ public class CompanyController {
         //OBTENER ID
         String token = jwtUtils.generateToken(email, companyId);
 
-        //
+        // ENVIAMOS EL ID AL FRONTEND
         return ResponseEntity.ok(Map.of(
                 "message", "¡Login exitoso!",
-                "token", token
+                "token", token,
+                "id", companyId
         ));
     }
 

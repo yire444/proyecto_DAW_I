@@ -4,6 +4,7 @@ import com.nova.talentnova.dto.EmployeeFilterDto;
 import com.nova.talentnova.dto.EmployeeProfileUpdateDto;
 import com.nova.talentnova.dto.EmployeeRequestDto;
 import com.nova.talentnova.dto.EmployeeResponseDto;
+import com.nova.talentnova.security.JwtUtils;
 import com.nova.talentnova.service.IEmployeeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.Map;
 public class EmployeeController {
 
     private final IEmployeeService employeeService;
+    private final JwtUtils jwtUtils;
 
     // LISTAR CON FILTROS
     @PostMapping("/list-and-filter")
@@ -61,12 +63,19 @@ public class EmployeeController {
 
     //LOGIN EMPLEADO
     @PostMapping("/login")
-    public ResponseEntity<EmployeeResponseDto> loginEmployee(@RequestBody Map<String, String> credentials) {
+    public ResponseEntity<Map<String, Object>> loginEmployee(@RequestBody Map<String, String> credentials) {
         String corporateEmail = credentials.get("corporateEmail");
         String password = credentials.get("password");
 
         EmployeeResponseDto employee = employeeService.loginEmployee(corporateEmail, password);
-        return ResponseEntity.ok(employee);
+
+        String token = jwtUtils.generateToken(corporateEmail, employee.getId());
+
+        return ResponseEntity.ok(Map.of(
+                "message", "¡Bienvenido a tu portal de colaborador!",
+                "token", token,
+                "id", employee.getId()
+        ));
     }
 
     //ACTUALIZAR EMPLEADO
